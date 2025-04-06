@@ -11,15 +11,29 @@ func GoLandingPage(w http.ResponseWriter, r *http.Request) {
 }
 
 // @desc get Html page for auth admin
-// @route GET /auth-admin
+// @route GET /login-admin
 // @access public
-func  GoAuthAdmin(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "adminLogin.html")
+func  GoLoginAdmin(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "auth/adminLogin.html")
 }
 
-// @desc get Html page for auth for users
-// @route GET /auth-user
+// @desc get Html page for login for users
+// @route GET /login-user
 // @access public
-func  GoAuthUser(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "userLogin.html")
+func  GoLoginUser(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "auth/userLogin.html")
+}
+
+// @desc get Html page for auth admin
+// @route GET /signup-admin
+// @access public
+func  GoSignupAdmin(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "auth/adminSignup.html")
+}
+
+// @desc get Html page for login for users
+// @route GET /signup-user
+// @access public
+func  GoSignupUser(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "auth/userSignup.html")
 }
