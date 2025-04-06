@@ -6,17 +6,20 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>signup user</h1>
+    <h1>Signup User</h1>
     <container>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <label fpor="password-repete">Repeat Your Password:</button>
-        <input type="password" id="password-repeted" name="password-repeted" required>
-        <button type="submit">Signup</button>
+        <form action="/api/auth/register-user" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="password-repeted">Repeat Your Password:</label> <!-- Fixed typo in 'for' attribute -->
+            <input type="password" id="password-repeted" name="password-repeted" required>
+            <button type="submit">Signup</button>
+        </form>
         <div class="toggle-link">
-            <p>Do have an account already? <a href="/login-user" id="user-login-link">Login</a></p>
+            <p>Do you have an account already? <a href="/login-user" id="user-login-link">Login</a></p>
+        </div>
     </container>
 </body>
 </html>

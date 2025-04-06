@@ -8,13 +8,15 @@
 <body>
     <h1>login user</h1>
     <container>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Login</button>
-        <div class="toggle-link">
-            <p>Don't have an account? <a href="/register-user" id="user-register-link">Register</a></p>
+        <form action="/api/auth/login-user" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+            <div class="toggle-link">
+                <p>Don't have an account? <a href="/register-user" id="user-register-link">Register</a></p>
+        </form>
     </container>
 </body>
 </html>

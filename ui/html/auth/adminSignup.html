@@ -8,15 +8,17 @@
 <body>
     <h1>signup admin</h1>
     <container>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="Organization">Corporation Email:</label>
-        <input type="text" id="corp-email" name="corp-email" required>
-        <button type="key">Copration Key:</button>
-        <input type="password" id="corp-key" name="corp-key" required>
-        <button type="submit">Signup</button>
-        <div class="toggle-link">
-            <p>Do have an account already? <a href="/login-admin" id="user-login-link">Login</a></p>
+        <form action="/api/auth/register-admin" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="Organization">Corporation Email:</label>
+            <input type="text" id="corp-email" name="corp-email" required>
+            <button type="key">Copration Key:</button>
+            <input type="password" id="corp-key" name="corp-key" required>
+            <button type="submit">Signup</button>
+            <div class="toggle-link">
+                <p>Do have an account already? <a href="/login-admin" id="user-login-link">Login</a></p>
+        </form>
     </container>
 </body>
 </html>
