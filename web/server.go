@@ -35,8 +35,9 @@ func (a *Application) routes() http.Handler {
     mux := http.NewServeMux()
 
     // Frontend Routes (HTML pages)
-    mux.HandleFunc("/", routes.LandingHandler)      // Landing page
-    mux.HandleFunc("/auth", routes.AuthHandler)   // Signin-Login page
+    mux.HandleFunc("/", routes.GoLandingPage)      // Landing page
+    mux.HandleFunc("/auth-user", routes.GoAuthUser)   // Signin-Login page for regular users
+    mux.HandleFunc("/auth-admin", routes.GoAuthAdmin) // Signin-Login page for admin users
 
     mux.HandleFunc("/api/auth/login-User", routes.LoginAdmin)    // Admin login
     mux.HandleFunc("/api/auth/login-admin", routes.LoginUser)    // User login
