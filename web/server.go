@@ -33,7 +33,14 @@ func (a *Application) Listen() error {
 
 func (a *Application) routes() http.Handler {
     mux := http.NewServeMux()
-    mux.HandleFunc("/", routes.LandingHandler)
-    mux.HandleFunc("/auth", routes.AuthHandler)
+
+    // Frontend Routes (HTML pages)
+    mux.HandleFunc("/", routes.LandingHandler)      // Landing page
+    mux.HandleFunc("/auth", routes.AuthHandler)   // Signin-Login page
+
+    mux.HandleFunc("/api/auth/login", routes.LoginHandler)    // User login
+    mux.HandleFunc("/api/auth/register", routes.SigninHandler) // User registration
+
+
     return mux
 }
