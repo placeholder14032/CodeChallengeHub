@@ -1,0 +1,19 @@
+-- [*] start server 
+-- [*] routes stuff
+-- [*] welcome page (landing)
+-- [*] login page 
+-- [*] signup page
+-- [ ] data from auth
+-- [ ] profile page 
+-- [ ] Problem Detail Page 
+-- [ ] submit answer page
+-- [ ] Problem List Page “paginatopn”
+-- [ ] my submition page 
+-- [ ] Create Problem Page
+
+-- [ ] a little css:
+
+-- [ ] problems designed by me can be same as all problems and stuff?
+-- [ ] realesed problems ??
+-- [ ] homepage ??
+
