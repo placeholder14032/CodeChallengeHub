@@ -6,5 +6,6 @@ import(
 
 func  TempHandler(w http.ResponseWriter, r *http.Request) {
 	// Handle the request here
-	w.Write([]byte("Temporary Handler"))
+	// w.Write([]byte("Temporary Handler"))
+	renderTemplate(w, "temp.html")
 }
