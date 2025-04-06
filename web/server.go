@@ -38,8 +38,10 @@ func (a *Application) routes() http.Handler {
     mux.HandleFunc("/", routes.LandingHandler)      // Landing page
     mux.HandleFunc("/auth", routes.AuthHandler)   // Signin-Login page
 
-    mux.HandleFunc("/api/auth/login", routes.LoginHandler)    // User login
-    mux.HandleFunc("/api/auth/register", routes.SigninHandler) // User registration
+    mux.HandleFunc("/api/auth/login-User", routes.LoginAdmin)    // Admin login
+    mux.HandleFunc("/api/auth/login-admin", routes.LoginUser)    // User login
+    mux.HandleFunc("/api/auth/register-user", routes.SignupUser)      // User registration
+    mux.HandleFunc("/api/auth/register-admin", routes.SignupAdmin) // Admin registration ???
 
 
     return mux
