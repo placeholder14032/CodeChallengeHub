@@ -21,3 +21,4 @@ func MyApp(appName string,server *Server,debug bool,errorLog *log.Logger,infoLog
         InfoLog: infoLog,
     }
 }
+
