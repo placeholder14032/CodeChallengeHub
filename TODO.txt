@@ -4,7 +4,8 @@
 -- [*] login page 
 -- [*] signup page
 -- [*] data from auth
--- [ ] profile page 
+-- [*] profile page 
+-- [ ] kinda navigator
 -- [ ] Problem Detail Page 
 -- [ ] submit answer page
 -- [ ] Problem List Page “paginatopn”
