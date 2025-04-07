@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem: {{.Title}}</title></head>
+<body>
+    <h1>Problem: {{.Title}}</h1>
+
+    <div>
+        <h2>Statement</h2>
+        <p>{{.Statement}}</p>
+    </div>
+
+    <div>
+        <h2>Explanation</h2>
+        <p>{{.Explanation}}</p>
+    </div>
+
+    <div>
+        <h2>Time Limit</h2>
+        <p>{{.TimeLimit}} ms</p>
+    </div>
+
+    <div>
+        <h2>Memory Limit</h2>
+        <p>{{.MemoryLimit}} MB</p>
+    </div>
+
+    <div>
+        <h2>Sample Input</h2>
+        <pre>{{.Input}}</pre>
+    </div>
+
+    <div>
+        <h2>Sample Output</h2>
+        <pre>{{.Output}}</pre>
+    </div>
+
+    <div>
+        <!-- <a href="/submit_answer?problem={{.ID}}">Submit Your Answer</a> -->
+    </div>
+</body>
+</html>
