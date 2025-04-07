@@ -36,10 +36,13 @@ func (a *Application) routes() http.Handler {
 
     // Frontend Routes (HTML pages)
     mux.HandleFunc("/", routes.GoLandingPage)      // Landing page
+
     mux.HandleFunc("/login-user", routes.GoLoginUser)   // Login page for regular users
     mux.HandleFunc("/login-admin", routes.GoLoginAdmin) // Login page for admin users
     mux.HandleFunc("/register-user", routes.GoSignupUser)   // Login page for regular users
     mux.HandleFunc("/register-admin", routes.GoSignupAdmin) // Login page for admin users
+
+    mux.HandleFunc("/profile", routes.GoProfilePage) // Login page for admin users
 
 
     mux.HandleFunc("/api/auth/login-User", routes.LoginAdmin)    // Admin login

@@ -15,6 +15,9 @@ func  LoginUser(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 	fmt.Println("Username:", username)
 	fmt.Println("Password:", password)
+
+	// Redirect to profile page with status code 303 (See Other)
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
 // @desc login and check password for signin admin user
@@ -26,7 +29,9 @@ func  LoginAdmin(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 	fmt.Println("Username:", username)
 	fmt.Println("Password:", password)
-}
+	
+	// Redirect to profile page with status code 303 (See Other)
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)}
 
 
 func  checkUserStatus_Login(username, password string) bool {

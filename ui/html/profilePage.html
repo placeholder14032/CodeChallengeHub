@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+</head>
+<body>
+    <h1>profilleeeeeeee</h1>
+    <div>
+        <div > <!-- Profile Header -->
+            <h1>Profile</h1>
+            <h2>Username: <span id="username">{{.Username}}</span></h2>
+        </div>
+
+        <div > <!-- Profile Status -->
+            <div>
+                <h3>Total Questions Attempted</h3>
+                <p id="total-attempts">{{.TotalAttempts}}</p>
+            </div>
+            <div>
+                <h3>Success Rate</h3>
+                <p id="success-rate">{{.SuccessRate}}%</p>
+            </div>
+            <div>
+                <h3>Questions Solved</h3>
+                <p id="solved">{{.QuestionsSolved}}</p>
+            </div>
+        </div>
+
+        <!-- Admin controls - only visible to administrators -->
+        {{if .IsAdmin}}
+        <div>
+            <h3>Admin Controls</h3>
+            <form action="/make-admin" method="POST">
+                <input type="hidden" name="userID" value="{{.UserID}}">
+                <button type="submit">Make Admin</button>
+            </form>
+            <form action="/remove-admin" method="POST">
+                <input type="hidden" name="userID" value="{{.UserID}}">
+                <button type="submit">Remove Admin Access</button>
+            </form>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

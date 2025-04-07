@@ -16,6 +16,9 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Username:", username)
 	fmt.Println("Password:", password)
 	fmt.Println("Confirm Password:", passwordConfirm)
+	
+	// Redirect to profile page with status code 303 (See Other)
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
 
@@ -32,6 +35,8 @@ func  SignupAdmin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Corp Email:", corpEmail)
 	fmt.Println("Corp Key:", corpKey)
 
+	// Redirect to profile page with status code 303 (See Other)
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
 func checkUserStatus_Signup(username, password string) bool {	
