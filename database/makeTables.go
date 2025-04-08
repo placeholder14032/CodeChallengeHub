@@ -18,10 +18,10 @@ type User struct {
 func connect() (*sql.DB, error) {
 	var err error
 
-	username := "Mahdi"
-	password := "Mahdi0441265367"
+	username := "Mahdi"           // your MySQL username
+	password := "Mahdi0441265367" // your MySQL password
 	hostname := "127.0.0.1:3306"
-	dbname := "codehub"
+	dbname := "codehub" // your MySQL database name
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", username, password, hostname, dbname)
 
@@ -34,7 +34,10 @@ func connect() (*sql.DB, error) {
     create table if not exists users (
 		id integer not null primary key AUTO_INCREMENT, 
 		username varchar(50) not null unique, 
-		password varchar(255) not null
+		password varchar(255) not null,
+		is_admin BOOLEAN DEFAULT false,
+		attempted_problems INT DEFAULT 0, 
+		solved_probloms INT DEFAULT 0
 	);
     `
 	makeProblems := `
