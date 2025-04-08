@@ -5,17 +5,15 @@
 -- [*] signup page
 -- [*] data from auth
 -- [*] profile page 
--- [ ] kinda navigator
+-- [ ] kinda navigator <-------------------------
 -- [*] Problem Detail Page 
 -- [*] submit answer page
 -- [*] Problem List Page “paginatopn”
 -- [*] Pagination
 -- [*] my submition page 
--- [ ] Create Problem Page
+-- [*] Create Problem Page
 
 -- [ ] a little css:
 
--- [ ] problems designed by me can be same as all problems and stuff?
--- [ ] realesed problems ??
 -- [ ] homepage ??
 
