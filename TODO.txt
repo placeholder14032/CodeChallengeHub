@@ -15,6 +15,3 @@
 -- [*] submission page fo each
 
 -- [ ] a little css:
-
--- [ ] homepage ??
-

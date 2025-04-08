@@ -14,7 +14,7 @@
           <tr>
             <th>Problem Title</th>
             <th>Status</th>
-            <th>Code</th>
+            <th>View</th>
             <th>Submitted At</th>
           </tr>
         </thead>
@@ -24,7 +24,8 @@
             <td><a href="/problem?id={{.ProblemID}}">{{.ProblemTitle}}</a></td>
             <td class="status-{{.Status}}">{{.Status}}</td>
             <td>
-              <pre><code>{{.Code}}</code></pre>
+              <!-- <pre><code>{{.Code}}</code></pre> -->
+               <a href="/submission?id={{.ID}}">{{.ID}}</a>
             </td>
             <td>{{.SubmittedAt.Format "2006-01-02 15:04:05"}}</td>
           </tr>
