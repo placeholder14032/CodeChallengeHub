@@ -64,8 +64,8 @@ func  GoProfilePage(w http.ResponseWriter, r *http.Request) {
 
 
 // @desc get Html page for each problem page
-// @route GET /problem -> // later we should search with id i guess: /problem/:id
-// @access private (you can only access this page if you are logged in) "and if you have access to the problem ??"
+// @route GET /problem -> // later we should search with id i guess: /problem/:id ??
+// @access private (you can only access this page if you are logged in) 
 func GoProblemPage(w http.ResponseWriter, r *http.Request) {
 	 problem := struct{
 		ID         string
@@ -89,4 +89,11 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
 
 
 	renderTemplate(w, "problem.html",problem)
+}
+
+// @desc get Html page for submitting problem
+// @route GET / submit_answer 
+// @access private (you can only access this page if you are logged in) 
+func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
+   renderTemplate(w, "problem_submit.html",nil)
 }

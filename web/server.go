@@ -43,13 +43,17 @@ func (a *Application) routes() http.Handler {
     mux.HandleFunc("/register-admin", routes.GoSignupAdmin) // Login page for admin users
 
     mux.HandleFunc("/profile", routes.GoProfilePage) // Login page for admin users
+
     mux.HandleFunc("/problem", routes.GoProblemPage) // Login page for admin users
+    mux.HandleFunc("/submit_answer", routes.GoSubmitAnswer) // Go to submit answer page
 
 
     mux.HandleFunc("/api/auth/login-User", routes.LoginAdmin)    // Admin login
     mux.HandleFunc("/api/auth/login-admin", routes.LoginUser)    // User login
     mux.HandleFunc("/api/auth/register-user", routes.SignupUser)      // User registration
     mux.HandleFunc("/api/auth/register-admin", routes.SignupAdmin) // Admin registration ???
+    mux.HandleFunc("/api/submit_answer", routes.SubmitAnswer) // Go to submit answer page
+
 
 
     return mux
