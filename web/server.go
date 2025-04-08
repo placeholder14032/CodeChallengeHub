@@ -1,12 +1,11 @@
 package web
 
 import (
-    "fmt"
-    "net/http"
-    "time"
+	"fmt"
+	"net/http"
+	"time"
 
-    "github.com/placeHolder143032/CodeChallengeHub/web/routes"
-
+	"github.com/placeHolder143032/CodeChallengeHub/web/routes"
 )
 
 type Server struct {
@@ -46,7 +45,7 @@ func (a *Application) routes() http.Handler {
 
     mux.HandleFunc("/problem", routes.GoProblemPage) // Login page for admin users
     mux.HandleFunc("/submit_answer", routes.GoSubmitAnswer) // Go to submit answer page
-
+    mux.HandleFunc("/problems", routes.GoProblemsListPage) // all problems list page
 
     mux.HandleFunc("/api/auth/login-User", routes.LoginAdmin)    // Admin login
     mux.HandleFunc("/api/auth/login-admin", routes.LoginUser)    // User login

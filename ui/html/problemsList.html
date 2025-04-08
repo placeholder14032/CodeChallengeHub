@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coding Problems</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <div class="problems-container">
+      <h1>Coding Problems</h1>
+      <table class="problems-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>Submissions</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Problems}}
+          <tr>
+            <td>{{if .Solved}} ✅ {{else}} ⭕ {{end}}</td>
+            <td><a href="/problem?id={{.ID}}">{{.Title}}</a></td>
+            <td class="difficulty-{{.Difficulty}}">{{.Difficulty}}</td>
+            <td>{{.Submissions}}</td>
+            <td>
+              <a href="/submit_answer?problem={{.ID}}" class="solve-button"
+                >Solve</a
+              >
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

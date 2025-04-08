@@ -6,8 +6,8 @@
 -- [*] data from auth
 -- [*] profile page 
 -- [ ] kinda navigator
--- [ ] Problem Detail Page 
--- [ ] submit answer page
+-- [*] Problem Detail Page 
+-- [*] submit answer page
 -- [ ] Problem List Page “paginatopn”
 -- [ ] my submition page 
 -- [ ] Create Problem Page

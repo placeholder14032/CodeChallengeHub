@@ -97,3 +97,36 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
 func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
    renderTemplate(w, "problem_submit.html",nil)
 }
+
+// @desc get HTML page for all problems we should add pagination
+// @route GET /problems
+// @access private (you can only access this page if you are logged in) 
+func GoProblemsListPage(w http.ResponseWriter, r *http.Request) {
+    // TODO: Fetch problems from your database
+    // but for now
+    problems := []Problem{
+        {ID: "1", Title: "Two Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "2", Title: "Add Two Numbers", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "3", Title: "Longest Substring", Difficulty: "Medium", Solved: false, Submissions: 0},	
+		{ID: "4", Title: "three Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "5", Title: "gorg ali", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "7", Title: "DFS", Difficulty: "Medium", Solved: false, Submissions: 0},	
+		{ID: "8", Title: "A*", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "9", Title: "Othello", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "10", Title: "project", Difficulty: "Medium", Solved: false, Submissions: 0},	
+		{ID: "11", Title: "super hexagon", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "12", Title: "super mario", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "13", Title: "Justhis", Difficulty: "Medium", Solved: false, Submissions: 0},	
+		{ID: "14", Title: "Big mouth", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "15", Title: "New Face", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "16", Title: "alsfnnlsnfcnasf", Difficulty: "Medium", Solved: false, Submissions: 0},	
+    }
+
+    data := struct {
+        Problems []Problem
+    }{
+        Problems: problems,
+    }
+
+	renderTemplate(w, "problemsList.html",data)
+}
