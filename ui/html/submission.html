@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission - {{.Submission.ID}}</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+    <div class="submission-container">
+        <h1>Submission Details</h1>
+        <div class="submission-details">
+            <p><strong>Submission ID:</strong> {{.Submission.ID}}</p>
+            <p><strong>Problem:</strong> <a href="/problem?id={{.Submission.ProblemID}}">{{.Submission.ProblemTitle}}</a></p>
+            <p><strong>Owner:</strong> {{.Submission.OwnerUsername}}</p>
+            <p><strong>Status:</strong> <span class="status-{{.Submission.Status}}">{{.Submission.Status}}</span></p>
+            <p><strong>Time Used:</strong> {{.Submission.TimeUsed}} ms</p>
+            <p><strong>Submitted At:</strong> {{.Submission.SubmittedAt.Format "2006-01-02 15:04:05"}}</p>
+        </div>
+
+        <div class="submitted-code">
+            <h2>Submitted Code</h2>
+            <pre><code>{{.Submission.Code}}</code></pre>
+        </div>
+
+        <a href="/submissions" class="back-link">Back to My Submissions</a>
+    </div>
+</body>
+</html>

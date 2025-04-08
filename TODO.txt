@@ -5,13 +5,14 @@
 -- [*] signup page
 -- [*] data from auth
 -- [*] profile page 
--- [ ] kinda navigator <-------------------------
+-- [ ] kinda navigator <------------------------- 
 -- [*] Problem Detail Page 
 -- [*] submit answer page
--- [*] Problem List Page “paginatopn”
+-- [*] Problem List Page
 -- [*] Pagination
 -- [*] my submition page 
 -- [*] Create Problem Page
+-- [*] submission page fo each
 
 -- [ ] a little css:
 

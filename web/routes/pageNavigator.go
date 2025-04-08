@@ -272,3 +272,77 @@ func GoAddProblemPage(w http.ResponseWriter, r *http.Request) {
         return
     }
 }
+
+// @desc get HTML page for a specific submission
+// @route GET /submission?id=<submission_id>
+// @access private (only accessible to the submission owner or admin)
+func GoSubmissionView(w http.ResponseWriter, r *http.Request) {
+    // Assume user is authenticated
+    currentUserID := "user123" // TODO: Replace with actual user ID from session/token
+
+    // Get submission ID from query parameter
+    submissionID := r.URL.Query().Get("id")
+    if submissionID == "" {
+        http.Error(w, "Submission ID is required", http.StatusBadRequest)
+        return
+    }
+
+    // TODO: Fetch submission from database
+    // For now, using static data
+    submissions := []Submission{
+        {
+            ID:            "s1",
+            ProblemID:     "1",
+            ProblemTitle:  "Two Sum",
+            UserID:        "user123",
+            OwnerUsername: "john_doe",
+            Code:          "func twoSum(nums []int, target int) []int {\n    for i := 0; i < len(nums); i++ {\n        for j := i + 1; j < len(nums); j++ {\n            if nums[i] + nums[j] == target {\n                return []int{i, j}\n            }\n        }\n    }\n    return nil\n}",
+            Status:        "OK",
+            TimeUsed:      50, // Example time in ms
+            SubmittedAt:   time.Now().Add(-24 * time.Hour),
+        },
+        {
+            ID:            "s2",
+            ProblemID:     "2",
+            ProblemTitle:  "Add Two Numbers",
+            UserID:        "user456",
+            OwnerUsername: "jane_smith",
+            Code:          "func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {\n    // ...",
+            Status:        "Wrong Answer",
+            TimeUsed:      120,
+            SubmittedAt:   time.Now().Add(-20 * time.Hour),
+        },
+    }
+
+    // Find the submission
+    var submission Submission
+    found := false
+    for _, s := range submissions {
+        if s.ID == submissionID {
+            submission = s
+            found = true
+            break
+        }
+    }
+
+    if !found {
+        http.Error(w, "Submission not found", http.StatusNotFound)
+        return
+    }
+
+    // Access control: only the owner or an admin can view
+    isAdmin := false // TODO: Implement admin check (e.g., from user role in DB)
+    if submission.UserID != currentUserID && !isAdmin {
+        http.Error(w, "Forbidden: You can only view your own submissions", http.StatusForbidden)
+        return
+    }
+
+    // Prepare data for template
+    data := struct {
+        Submission Submission
+    }{
+        Submission: submission,
+    }
+
+    renderTemplate(w, "/submission.html", data)
+}
