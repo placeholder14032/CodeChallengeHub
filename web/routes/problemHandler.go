@@ -19,14 +19,5 @@ func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
     Difficulty  string
     Solved      bool
     Submissions int
-}
-
-type PaginatedProblems struct {
-    Problems     []Problem
-    CurrentPage  int
-    TotalPages   int
-    HasNext      bool
-    HasPrev      bool
-    ItemsPerPage int
-}
+ }
 

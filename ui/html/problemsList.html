@@ -27,14 +27,35 @@
             <td class="difficulty-{{.Difficulty}}">{{.Difficulty}}</td>
             <td>{{.Submissions}}</td>
             <td>
-              <a href="/submit_answer?problem={{.ID}}" class="solve-button"
-                >Solve</a
-              >
+              <a href="/submit_answer?problem={{.ID}}" class="solve-button">Solve</a>
             </td>
           </tr>
           {{end}}
         </tbody>
       </table>
+      
+      <!-- Pagination Controls -->
+      <div class="pagination">
+        {{if gt .PrevPage 0}}
+          <a href="/problems?page={{.PrevPage}}">&laquo; Previous</a>
+        {{else}}
+          <span class="disabled">&laquo; Previous</span>
+        {{end}}
+        
+        {{range $i := .PageNumbers}}
+          {{if eq $i $.CurrentPage}}
+            <span class="current-page">{{$i}}</span>
+          {{else}}
+            <a href="/problems?page={{$i}}">{{$i}}</a>
+          {{end}}
+        {{end}}
+        
+        {{if lt .NextPage .TotalPages}}
+          <a href="/problems?page={{.NextPage}}">Next &raquo;</a>
+        {{else}}
+          <span class="disabled">Next &raquo;</span>
+        {{end}}
+      </div>
     </div>
   </body>
 </html>

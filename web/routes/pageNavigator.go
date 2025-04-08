@@ -1,6 +1,9 @@
 package routes
-import(
+
+import (
+	"math"
 	"net/http"
+	"strconv"
 )
 
 // @desc get landing(welcome) page html
@@ -98,35 +101,81 @@ func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
    renderTemplate(w, "problem_submit.html",nil)
 }
 
-// @desc get HTML page for all problems we should add pagination
-// @route GET /problems
-// @access private (you can only access this page if you are logged in) 
+// @desc get HTML page for all problems with pagination
+// @route GET /problems?page=<number>
+// @access private (you can only access this page if you are logged in)
 func GoProblemsListPage(w http.ResponseWriter, r *http.Request) {
+    // Get page number from query parameter, default to 1
+    pageStr := r.URL.Query().Get("page")
+    page, err := strconv.Atoi(pageStr)
+    if err != nil || page < 1 {
+        page = 1
+    }
+
+    // Define items per page
+    const itemsPerPage = 5
+
     // TODO: Fetch problems from your database
-    // but for now
-    problems := []Problem{
+    // For now, using static data
+    allProblems := []Problem{
         {ID: "1", Title: "Two Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
         {ID: "2", Title: "Add Two Numbers", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "3", Title: "Longest Substring", Difficulty: "Medium", Solved: false, Submissions: 0},	
-		{ID: "4", Title: "three Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
-        {ID: "5", Title: "gorg ali", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "7", Title: "DFS", Difficulty: "Medium", Solved: false, Submissions: 0},	
-		{ID: "8", Title: "A*", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "3", Title: "Longest Substring", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "4", Title: "Three Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "5", Title: "Gorg Ali", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "7", Title: "DFS", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "8", Title: "A*", Difficulty: "Easy", Solved: false, Submissions: 0},
         {ID: "9", Title: "Othello", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "10", Title: "project", Difficulty: "Medium", Solved: false, Submissions: 0},	
-		{ID: "11", Title: "super hexagon", Difficulty: "Easy", Solved: false, Submissions: 0},
-        {ID: "12", Title: "super mario", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "13", Title: "Justhis", Difficulty: "Medium", Solved: false, Submissions: 0},	
-		{ID: "14", Title: "Big mouth", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "10", Title: "Project", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "11", Title: "Super Hexagon", Difficulty: "Easy", Solved: false, Submissions: 0},
+        {ID: "12", Title: "Super Mario", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "13", Title: "Justhis", Difficulty: "Medium", Solved: false, Submissions: 0},
+        {ID: "14", Title: "Big Mouth", Difficulty: "Easy", Solved: false, Submissions: 0},
         {ID: "15", Title: "New Face", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "16", Title: "alsfnnlsnfcnasf", Difficulty: "Medium", Solved: false, Submissions: 0},	
+        {ID: "16", Title: "Alsfnnlsnfcnasf", Difficulty: "Medium", Solved: false, Submissions: 0},
     }
 
+    // Calculate pagination details
+    totalItems := len(allProblems)
+    totalPages := int(math.Ceil(float64(totalItems) / float64(itemsPerPage)))
+    
+    // Ensure page doesn't exceed total pages
+    if page > totalPages {
+        page = totalPages
+    }
+
+    // Calculate start and end indices
+    start := (page - 1) * itemsPerPage
+    end := start + itemsPerPage
+    if end > totalItems {
+        end = totalItems
+    }
+
+    // Slice the problems for the current page
+    problems := allProblems[start:end]
+
+    // Generate page numbers for navigation (simple version: show all pages)
+    var pageNumbers []int
+    for i := 1; i <= totalPages; i++ {
+        pageNumbers = append(pageNumbers, i)
+    }
+
+    // Prepare data for template
     data := struct {
-        Problems []Problem
+        Problems    []Problem
+        CurrentPage int
+        PrevPage    int
+        NextPage    int
+        TotalPages  int
+        PageNumbers []int
     }{
-        Problems: problems,
+        Problems:    problems,
+        CurrentPage: page,
+        PrevPage:    page - 1,
+        NextPage:    page + 1,
+        TotalPages:  totalPages,
+        PageNumbers: pageNumbers,
     }
 
-	renderTemplate(w, "problemsList.html",data)
+    renderTemplate(w, "problemsList.html", data)
 }
