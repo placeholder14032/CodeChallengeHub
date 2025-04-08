@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Solution</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="submit-container">
+        <h1>Submit Your Solution</h1>
+        <form action="/submit_answer?problem={{.ProblemID}}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="language">Programming Language:</label>
+                <select name="language" id="language" required>
+                    <option value="go">Go</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="code">Your Code:</label>
+                <textarea name="code" id="code" rows="20" required></textarea>
+            </div>
+            <button type="submit">Submit Solution</button>
+        </form>
+    </div>
+</body>
+</html>
