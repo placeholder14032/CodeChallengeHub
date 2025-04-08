@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Submissions</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <div class="submissions-container">
+      <h1>My Submissions</h1>
+      <table class="submissions-table">
+        <thead>
+          <tr>
+            <th>Problem Title</th>
+            <th>Status</th>
+            <th>Code</th>
+            <th>Submitted At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Submissions}}
+          <tr>
+            <td><a href="/problem?id={{.ProblemID}}">{{.ProblemTitle}}</a></td>
+            <td class="status-{{.Status}}">{{.Status}}</td>
+            <td>
+              <pre><code>{{.Code}}</code></pre>
+            </td>
+            <td>{{.SubmittedAt.Format "2006-01-02 15:04:05"}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <div class="pagination">
+        {{if gt .PrevPage 0}}
+          <a href="/submissions?page={{.PrevPage}}">« Previous</a>
+        {{else}}
+          <span class="disabled">« Previous</span>
+        {{end}}
+        
+        {{range $i := .PageNumbers}}
+          {{if eq $i $.CurrentPage}}
+            <span class="current-page">{{$i}}</span>
+          {{else}}
+            <a href="/submissions?page={{$i}}">{{$i}}</a>
+          {{end}}
+        {{end}}
+        
+        {{if lt .NextPage .TotalPages}}
+          <a href="/submissions?page={{.NextPage}}">Next »</a>
+        {{else}}
+          <span class="disabled">Next »</span>
+        {{end}}
+      </div>
+    </div>
+  </body>
+</html>

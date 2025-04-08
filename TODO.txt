@@ -9,8 +9,8 @@
 -- [*] Problem Detail Page 
 -- [*] submit answer page
 -- [*] Problem List Page “paginatopn”
--- [ ] Pagination
--- [ ] my submition page 
+-- [*] Pagination
+-- [*] my submition page 
 -- [ ] Create Problem Page
 
 -- [ ] a little css:
