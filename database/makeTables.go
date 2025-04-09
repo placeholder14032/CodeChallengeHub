@@ -1,50 +1,14 @@
-package main
+package database
 
 import (
 	"database/sql"
 	"fmt"
-	"time"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB
 
-type User struct {
-	ID                 int    `json:"id"`
-	Username           string `json:"username"`
-	Password           string `json:"password"`
-	Is_admin           int    `json:"is_admin"`
-	Attempted_problems int    `json:"attempted_problems"`
-	Solved_problems    int    `json:"solved_problems"`
-}
-
-type Problem struct {
-	ID               int       `json:"id"`
-	User_id          int       `json:"user_id"`
-	Title            string    `json:"title"`
-	Description_path string    `json:"description_path"`
-	Input_path       string    `json:"input_path"`
-	Output_path      string    `json:"output_path"`
-	Created_at       time.Time `json:"created_at"`
-	Is_Published     bool      `json:"is_published"`
-	Time_limit_ms    int       `json:"time_limit_ms"`
-	Memory_limit_mb  int       `json:"memory_limit_mb"`
-}
-
-type Submission struct {
-	ID            int       `json:"id"`
-	User_id       int       `json:"user_id"`
-	Problem_id    int       `json:"problem_id"`
-	Code_path     string    `json:"code_path"`
-	State         int8      `json:"state"`
-	Created_at    time.Time `json:"created_at"`
-	Runtime_ms    int       `json:"runtime_ms"`
-	Memory_used   int       `json:"memory_used"`
-	Error_message string    `json:"error_message"`
-}
-
-func connect() (*sql.DB, error) {
+func Connect() (*sql.DB, error) {
 	var err error
 
 	username := "Mahdi"           // your MySQL username
@@ -131,11 +95,4 @@ func connect() (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
-}
-
-func main() {
-	_, err := connect()
-	if err != nil {
-		panic(err)
-	}
 }

@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/placeHolder143032/CodeChallengeHub/web"
+    "github.com/placeHolder143032/CodeChallengeHub/database"
+
 )
 
 func main() {
@@ -28,4 +30,9 @@ func main() {
     if err := app.Listen(); err != nil {
         log.Fatal(err)
     }
+
+    _, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
 }
