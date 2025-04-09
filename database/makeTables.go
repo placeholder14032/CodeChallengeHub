@@ -32,6 +32,18 @@ type Problem struct {
 	Memory_limit_mb  int       `json:"memory_limit_mb"`
 }
 
+type Submission struct {
+	ID            int       `json:"id"`
+	User_id       int       `json:"user_id"`
+	Problem_id    int       `json:"problem_id"`
+	Code_path     string    `json:"code_path"`
+	State         int8      `json:"state"`
+	Created_at    time.Time `json:"created_at"`
+	Runtime_ms    int       `json:"runtime_ms"`
+	Memory_used   int       `json:"memory_used"`
+	Error_message string    `json:"error_message"`
+}
+
 func connect() (*sql.DB, error) {
 	var err error
 
@@ -80,9 +92,9 @@ func connect() (*sql.DB, error) {
 		code_path VARCHAR(255) NOT NULL,
 		state TINYINT DEFAULT 0,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		runtime_ms INT,
-		memory_used INT,
-		error_message TEXT
+		runtime_ms INT DEFAULT 0,
+		memory_used INT DEFAULT 0,
+		error_message TEXT DEFAULT ''
 	);
 	`
 
