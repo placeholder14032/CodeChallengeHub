@@ -44,7 +44,7 @@ func SignInUser(user User) (int, error) {
 	}
 
 	if password != user.Password {
-		return 0, errors.New("wring password")
+		return 0, errors.New("wrong password")
 	}
 
 	return id, nil
@@ -123,8 +123,6 @@ func ChangeUserPassword(id int, password string) error {
 
 	return nil
 }
-
-// TODO : add edit user
 
 func UpdateUserProblemStats() error {
 	query := `
