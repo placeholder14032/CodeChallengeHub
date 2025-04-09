@@ -33,9 +33,9 @@ func (a *Application) Listen() error {
 func (a *Application) routes() http.Handler {
     mux := http.NewServeMux()
 
-    fileServer := http.FileServer(http.Dir("static"))
-    mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
-    
+    fs := http.FileServer(http.Dir("./ui"))
+    http.Handle("/css/", fs)
+
     // Frontend Routes (HTML pages)
     mux.HandleFunc("/", routes.GoLandingPage)      // Landing page
 

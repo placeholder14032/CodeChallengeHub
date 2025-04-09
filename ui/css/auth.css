@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login User</title>
-    <!-- <link rel="stylesheet" href="../css/auth.css"> -->
-     <style>
-        /* Global Styles */
+/* Global Styles */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -147,34 +139,3 @@ footer {
         padding: 1.5rem;
     }
 }
-     </style>
-</head>
-<body>
-    <header>
-        <div class="logo">CodeChallengeHub</div>
-        <nav>
-            <a href="/login-user">Login</a>
-            <a href="/register-user">Sign Up</a>
-            <a href="/login-admin">Admin-Login</a>
-        </nav>
-    </header>
-
-    <main class="login-container">
-        <h1>Login User</h1>
-        <form action="/api/auth/login-user" method="POST">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">Login</button>
-            <div class="toggle-link">
-                <p>Don't have an account? <a href="/register-user" id="user-register-link">Register</a></p>
-            </div>
-        </form>
-    </main>
-
-    <footer>
-        <p>©2025 Code Challenge Hub. Computer Technology Project.</p>
-    </footer>
-</body>
-</html>
