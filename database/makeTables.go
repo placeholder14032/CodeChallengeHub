@@ -10,9 +10,12 @@ import (
 var db *sql.DB
 
 type User struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	ID                 int    `json:"id"`
+	Username           string `json:"username"`
+	Password           string `json:"password"`
+	Is_admin           bool   `json:"is_admin"`
+	Attempted_problems int    `json:"attempted_problems"`
+	Solved_problems    int    `json:"solved_problems"`
 }
 
 func connect() (*sql.DB, error) {
@@ -37,7 +40,7 @@ func connect() (*sql.DB, error) {
 		password varchar(255) not null,
 		is_admin BOOLEAN DEFAULT false,
 		attempted_problems INT DEFAULT 0, 
-		solved_probloms INT DEFAULT 0
+		solved_problems INT DEFAULT 0
 	);
     `
 	makeProblems := `
