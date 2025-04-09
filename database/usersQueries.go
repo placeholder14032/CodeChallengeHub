@@ -108,16 +108,17 @@ func ChangeUserPassword(id int, password string) error {
 	`
 	result, err := db.Exec(query, password, id)
 
+	if err != nil {
+		return err
+	}
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return err
 	}
+
 	if rowsAffected == 0 {
 		return errors.New("user does not exist")
-	}
-
-	if err != nil {
-		return err
 	}
 
 	return nil
