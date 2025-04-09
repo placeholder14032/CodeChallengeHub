@@ -44,11 +44,30 @@ func  LoginUser(w http.ResponseWriter, r *http.Request) {
 // @route POST /api/auth/login-admin
 // @access public
 func  LoginAdmin(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("Loginnnnnnn Adminnnnn")
+	fmt.Print("Login admin")
+
+	// Parse the request body
 	username := r.FormValue("username")
-	password := r.FormValue("password")
-	fmt.Println("Username:", username)
-	fmt.Println("Password:", password)
-	
+	password := r.FormValue("corp-key")
+	fmt.Print("Username:", username)
+	fmt.Println(", Password:", password)
+
+	// create user
+	targetUser := models.User{
+		Username: username,
+		Password: password,
+	}
+
+	id,err := database.SignInUser(targetUser)
+
+	targetUser.ID = id
+	// targetUser.Is_admin = 1
+
+	// TODO
+	if(err!=nil){
+		fmt.Println("Error:", err)
+	}else{
 	// Redirect to profile page with status code 303 (See Other)
-	http.Redirect(w, r, "/profile", http.StatusSeeOther)}
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
+	}
+}
