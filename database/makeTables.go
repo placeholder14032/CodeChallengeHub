@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -16,6 +17,19 @@ type User struct {
 	Is_admin           bool   `json:"is_admin"`
 	Attempted_problems int    `json:"attempted_problems"`
 	Solved_problems    int    `json:"solved_problems"`
+}
+
+type Problem struct {
+	ID               int       `json:"id"`
+	User_id          int       `json:"user_id"`
+	Title            string    `json:"title"`
+	Description_path string    `json:"description_path"`
+	Input_path       string    `json:"input_path"`
+	Output_path      string    `json:"output_path"`
+	Created_at       time.Time `json:"created_at"`
+	Is_Published     bool      `json:"is_published"`
+	Time_limit_ms    int       `json:"time_limit_ms"`
+	Memory_limit_mb  int       `json:"memory_limit_mb"`
 }
 
 func connect() (*sql.DB, error) {
