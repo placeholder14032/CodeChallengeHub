@@ -1,9 +1,6 @@
 package main
 
 import (
-	// 	"database/sql"
-	// 	"errors"
-
 	"database/sql"
 	"errors"
 
@@ -123,4 +120,35 @@ func GetSingleProblem(id int) (Problem, error) {
 	return problem, nil
 }
 
-// TODO: add edit problem
+func EditProblem(db *sql.DB, user_id, problem_id int, title string, time_limit_ms, memory_limit_mb int) error {
+	is_admin, err := GetUserRole(user_id)
+	if err != nil {
+		return err
+	}
+
+	if !is_admin {
+		var owner_id int
+		err = db.QueryRow("SELECT user_id FROM problems WHERE id = ?", problem_id).Scan(&owner_id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return errors.New("problem not found")
+			}
+			return err
+		}
+		if owner_id != user_id {
+			return errors.New("permission denied: not owner or admin")
+		}
+	}
+
+	query := `
+		UPDATE problems
+		SET title = ?, time_limit_ms = ?, memory_limit_mb = ?
+		WHERE id = ?
+	`
+	_, err = db.Exec(query, title, time_limit_ms, memory_limit_mb, problem_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
