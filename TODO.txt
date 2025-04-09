@@ -14,4 +14,11 @@
 -- [*] Create Problem Page
 -- [*] submission page fo each
 
--- [ ] a little css:
+-- [*] a little css:
+
+
+Left from front to be fully done:
+-- [ ] kinda navigator
+-- chnages if needed during merging
+-- remove styles from html to css
+** in case of error in signup and ... we might redirect and igonore the error kepp an eye on this
