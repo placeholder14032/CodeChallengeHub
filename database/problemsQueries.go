@@ -75,13 +75,14 @@ func GetProblemsPageUser(m, n int) ([]Problem, error) {
 	return problems, nil
 }
 
+// created at should be from the other side for less inconsistency
 func AddProblem(user_id int, problem Problem) error {
 	insertQuery := `
-	INSERT INTO problems (user_id, title, description_path, input_path, output_path, time_limit_ms, memory_limit_mb)
+	INSERT INTO problems (user_id, title, description_path, input_path, output_path, created_at, time_limit_ms, memory_limit_mb)
 	VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
-	_, err := db.Exec(insertQuery, user_id, problem.Title, problem.Description_path, problem.Input_path, problem.Output_path, problem.Time_limit_ms, problem.Memory_limit_mb)
+	_, err := db.Exec(insertQuery, user_id, problem.Title, problem.Description_path, problem.Input_path, problem.Output_path, problem.Created_at, problem.Time_limit_ms, problem.Memory_limit_mb)
 
 	if err != nil {
 		return err
