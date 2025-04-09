@@ -160,13 +160,13 @@
 
     <main class="login-container">
         <h1>Signup User</h1>
-        <form action="/api/auth/login-user" method="POST">
+        <form action="/api/auth/register-user" method="POST">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-            <label for="password-repeted">Repeat Your Password:</label> <!-- Fixed typo in 'for' attribute -->
-            <input type="password" id="password-repeted" name="password-repeted" required>
+            <label for="passwordConfirm">Repeat Your Password:</label>
+            <input type="password" id="passwordConfirm" name="passwordConfirm" required>
             <button type="submit">Signup</button>
             <div class="toggle-link">
                 <p>Do you have an account already? <a href="/login-user" id="user-login-link">Login</a></p>

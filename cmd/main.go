@@ -12,7 +12,7 @@ import (
 
 func main() {
     host := "localhost"
-    port := "8080"
+    port := "8090"
     
     // Initialize the application
     app := &web.Application{

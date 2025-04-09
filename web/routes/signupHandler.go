@@ -21,24 +21,6 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
-
-// @desc creaing a new admin account for signup ????????
-// @route POST /api/auth/register-user
-// @access public
-func  SignupAdmin(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("Signinnnnnnnn")
-	username := r.FormValue("username")
-	corpEmail := r.FormValue("corp-email")
-	corpKey := r.FormValue("corp-key")
-	fmt.Println("Username:", username)
-
-	fmt.Println("Corp Email:", corpEmail)
-	fmt.Println("Corp Key:", corpKey)
-
-	// Redirect to profile page with status code 303 (See Other)
-	http.Redirect(w, r, "/profile", http.StatusSeeOther)
-}
-
 func checkUserStatus_Signup(username, password string) bool {	
 	// check id user exists in the database
 	// check if the password is same as the confirm password
