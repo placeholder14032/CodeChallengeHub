@@ -25,7 +25,6 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 	if (password==passwordConfirm){
 		// ok continue signing up
 
-		fmt.Print("injaaahabhkabskhbas")
 		// create user
 		createdUser := models.User{
 			Username: username,
@@ -33,8 +32,6 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		database.SignUpUser(createdUser)
-
-		fmt.Println("hgereeeejakjsdblhjasbdvcfljha")
 		
 	// Redirect to profile page with status code 303 (See Other)
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
