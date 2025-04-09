@@ -126,7 +126,7 @@ func EditProblem(db *sql.DB, user_id, problem_id int, title string, time_limit_m
 		return err
 	}
 
-	if !is_admin {
+	if is_admin == 0 {
 		var owner_id int
 		err = db.QueryRow("SELECT user_id FROM problems WHERE id = ?", problem_id).Scan(&owner_id)
 		if err != nil {

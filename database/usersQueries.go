@@ -69,8 +69,8 @@ func GetUserInfo(id int) (User, error) {
 	return user, nil
 }
 
-func GetUserRole(id int) (bool, error) {
-	var is_admin bool
+func GetUserRole(id int) (int, error) {
+	var is_admin int
 	query := `
 	SELECT is_admin FROM users 
 	WHERE id = ? LIMIT 1
@@ -78,11 +78,11 @@ func GetUserRole(id int) (bool, error) {
 	err := db.QueryRow(query, id).Scan(&is_admin)
 
 	if err != nil && err != sql.ErrNoRows {
-		return false, err
+		return 0, err
 	}
 
 	if err == sql.ErrNoRows {
-		return false, errors.New("user does not exist")
+		return 0, errors.New("user does not exist")
 	}
 
 	return is_admin, nil
@@ -90,7 +90,12 @@ func GetUserRole(id int) (bool, error) {
 
 func ChangeUserRole(id int) error {
 	query := `
-	UPDATE users SET is_admin = NOT is_admin 
+	UPDATE users
+	SET is_admin = CASE
+		WHEN is_admin = 0 THEN 1
+		WHEN is_admin = 1 THEN 0
+		ELSE is_admin
+	END
 	WHERE id = ? LIMIT 1
 	`
 	_, err := db.Exec(query, id)

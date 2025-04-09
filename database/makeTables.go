@@ -14,7 +14,7 @@ type User struct {
 	ID                 int    `json:"id"`
 	Username           string `json:"username"`
 	Password           string `json:"password"`
-	Is_admin           bool   `json:"is_admin"`
+	Is_admin           int    `json:"is_admin"`
 	Attempted_problems int    `json:"attempted_problems"`
 	Solved_problems    int    `json:"solved_problems"`
 }
@@ -64,7 +64,7 @@ func connect() (*sql.DB, error) {
 		id integer not null primary key AUTO_INCREMENT, 
 		username varchar(50) not null unique, 
 		password varchar(255) not null,
-		is_admin BOOLEAN DEFAULT false,
+		is_admin BOOLEAN DEFAULT 0,
 		attempted_problems INT DEFAULT 0, 
 		solved_problems INT DEFAULT 0
 	);
@@ -108,6 +108,14 @@ func connect() (*sql.DB, error) {
 		4 -> memory limit
 		6 -> time limit
 		7 -> runtime error
+
+	*/
+	/*
+
+		states in is_admin
+		0 -> simple user
+		1 -> user with admin access
+		2 -> admin
 
 	*/
 	_, err = db.Exec(makeUsers)
