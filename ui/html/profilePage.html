@@ -3,26 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
+    <title>Profile Page - Code Challenge Hub</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fcff;
+            color: #2b4c7e;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: #e6f0fa;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2b4c7e;
+            padding-left: 2%;
+        }
+
+        header nav a {
+            color: #567ebb;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        header nav a:hover {
+            color: #2b4c7e;
+        }
+
+        /* Main Container */
+        .profile-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: #f0f7ff;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Profile Header */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header h1 {
+            font-size: 2.5rem;
+            color: #2b4c7e;
+            margin-bottom: 1rem;
+        }
+
+        .profile-header h2 {
+            font-size: 1.5rem;
+            color: #567ebb;
+        }
+
+        .profile-header h2 span {
+            font-weight: 600;
+            color: #2b4c7e;
+        }
+
+        /* Profile Status */
+        .profile-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-card h3 {
+            font-size: 1.2rem;
+            color: #2b4c7e;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-card p {
+            font-size: 1.5rem;
+            color: #567ebb;
+            font-weight: 600;
+        }
+
+        /* Admin Controls */
+        .admin-controls {
+            border-top: 1px solid #e6f0fa;
+            padding-top: 2rem;
+        }
+
+        .admin-controls h3 {
+            font-size: 1.5rem;
+            color: #2b4c7e;
+            margin-bottom: 1rem;
+        }
+
+        .admin-controls form {
+            display: inline-block;
+            margin: 0 0.5rem;
+        }
+
+        .admin-controls button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #ffeb99;
+            color: #2b4c7e;
+            border: 2px solid #ffe066;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-controls button:hover {
+            background-color: #ffe066;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #e6f0fa;
+            color: #567ebb;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .profile-header h1 {
+                font-size: 2rem;
+            }
+
+            .profile-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .profile-container {
+                margin: 2rem;
+                padding: 1.5rem;
+            }
+
+            .profile-status {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>profilleeeeeeee</h1>
-    <div>
-        <div > <!-- Profile Header -->
+    <header>
+        <div class="logo">CodeChallengeHub</div>
+        <nav>
+            <a href="/login-user">Login</a>
+            <a href="/register-user">Sign Up</a>
+            <a href="/login-admin">Admin-Login</a>
+        </nav>
+    </header>
+
+    <main class="profile-container">
+        <div class="profile-header">
             <h1>Profile</h1>
             <h2>Username: <span id="username">{{.Username}}</span></h2>
         </div>
 
-        <div > <!-- Profile Status -->
-            <div>
+        <div class="profile-status">
+            <div class="status-card">
                 <h3>Total Questions Attempted</h3>
                 <p id="total-attempts">{{.TotalAttempts}}</p>
             </div>
-            <div>
+            <div class="status-card">
                 <h3>Success Rate</h3>
                 <p id="success-rate">{{.SuccessRate}}%</p>
             </div>
-            <div>
+            <div class="status-card">
                 <h3>Questions Solved</h3>
                 <p id="solved">{{.QuestionsSolved}}</p>
             </div>
@@ -30,7 +204,7 @@
 
         <!-- Admin controls - only visible to administrators -->
         {{if .IsAdmin}}
-        <div>
+        <div class="admin-controls">
             <h3>Admin Controls</h3>
             <form action="/make-admin" method="POST">
                 <input type="hidden" name="userID" value="{{.UserID}}">
@@ -42,6 +216,10 @@
             </form>
         </div>
         {{end}}
-    </div>
+    </main>
+
+    <footer>
+        <p>© <script>document.write(new Date().getFullYear())</script> Code Challenge Hub. Computer Technology Project.</p>
+    </footer>
 </body>
 </html>
