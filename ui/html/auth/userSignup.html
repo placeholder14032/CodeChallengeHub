@@ -4,11 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        /* Global Styles */
+        body {
+          margin: 0;
+          font-family: Arial, sans-serif;
+          background-color: #f9fcff;
+          color: #2b4c7e;
+        }
+  
+        /* Header */
+        header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 2rem;
+          background-color: #e6f0fa;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+  
+        .logo {
+          font-size: 1.8rem;
+          font-weight: 600;
+          color: #2b4c7e;
+          padding-left: 2%;
+        }
+  
+        header nav a {
+          color: #567ebb;
+          text-decoration: none;
+          margin-left: 1.5rem;
+          font-size: 1.1rem;
+        }
+  
+        header nav a:hover {
+          color: #2b4c7e;
+        }
+  
+        /* Main Container */
+        .login-container {
+          max-width: 500px;
+          margin: 4rem auto;
+          padding: 2rem;
+          background: #f0f7ff;
+          border-radius: 15px;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+  
+        h1 {
+          font-size: 2.5rem;
+          color: #2b4c7e;
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+  
+        /* Form Styles */
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+  
+        label {
+          font-size: 1.2rem;
+          color: #567ebb;
+        }
+  
+        input[type="text"],
+        input[type="password"] {
+          padding: 0.8rem;
+          font-size: 1rem;
+          border: 2px solid #e6f0fa;
+          border-radius: 10px;
+          background-color: #fff;
+          color: #2b4c7e;
+          transition: border-color 0.3s ease;
+        }
+  
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+          border-color: #ffeb99;
+          outline: none;
+        }
+  
+        button[type="submit"] {
+          padding: 1rem;
+          font-size: 1.2rem;
+          background-color: #ffeb99;
+          color: #2b4c7e;
+          border: 2px solid #ffe066;
+          border-radius: 50px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+  
+        button[type="submit"]:hover {
+          background-color: #ffe066;
+          transform: scale(1.05);
+        }
+  
+        /* Toggle Link */
+        .toggle-link {
+          text-align: center;
+          margin-top: 1rem;
+        }
+  
+        .toggle-link p {
+          color: #567ebb;
+          font-size: 1rem;
+        }
+  
+        .toggle-link a {
+          color: #2b4c7e;
+          text-decoration: none;
+          font-weight: 600;
+        }
+  
+        .toggle-link a:hover {
+          color: #567ebb;
+        }
+  
+        /* Footer */
+        footer {
+          text-align: center;
+          padding: 1rem;
+          background-color: #e6f0fa;
+          color: #567ebb;
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+        }
+  
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          h1 {
+            font-size: 2rem;
+          }
+  
+          .login-container {
+            margin: 2rem;
+            padding: 1.5rem;
+          }
+        }
+      </style>
 </head>
 <body>
-    <h1>Signup User</h1>
-    <container>
-        <form action="/api/auth/register-user" method="POST">
+    <header>
+        <div class="logo">CodeChallengeHub</div>
+        <nav>
+            <a href="/login-user">Login</a>
+            <a href="/register-user">Sign Up</a>
+            <a href="/login-admin">Admin-Login</a>
+        </nav>
+    </header>
+
+    <main class="login-container">
+        <h1>Signup User</h1>
+        <form action="/api/auth/login-user" method="POST">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Password:</label>
@@ -16,10 +168,10 @@
             <label for="password-repeted">Repeat Your Password:</label> <!-- Fixed typo in 'for' attribute -->
             <input type="password" id="password-repeted" name="password-repeted" required>
             <button type="submit">Signup</button>
+            <div class="toggle-link">
+                <p>Do you have an account already? <a href="/login-user" id="user-login-link">Login</a></p>
+            </div>
         </form>
-        <div class="toggle-link">
-            <p>Do you have an account already? <a href="/login-user" id="user-login-link">Login</a></p>
-        </div>
-    </container>
+    </main>
 </body>
 </html>
