@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/placeHolder143032/CodeChallengeHub/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func SignUpUser(user User) error {
+func SignUpUser(user models.User) error {
 	var exists bool
 	query := "SELECT 1 FROM users WHERE username = ? LIMIT 1"
 	err := db.QueryRow(query, user.Username).Scan(&exists)
@@ -29,7 +31,7 @@ func SignUpUser(user User) error {
 	return nil
 }
 
-func SignInUser(user User) (int, error) {
+func SignInUser(user models.User) (int, error) {
 	var id int
 	var password string
 	query := "SELECT id, password FROM users WHERE username = ? LIMIT 1"
@@ -50,8 +52,8 @@ func SignInUser(user User) (int, error) {
 	return id, nil
 }
 
-func GetUserInfo(id int) (User, error) {
-	var user User
+func GetUserInfo(id int) (models.User, error) {
+	var user models.User
 	query := `
 	SELECT username, password, is_admin, attempted_problems, solved_problems FROM users 
 	WHERE id = ? LIMIT 1
@@ -59,11 +61,11 @@ func GetUserInfo(id int) (User, error) {
 	err := db.QueryRow(query, id).Scan(&user.Username, &user.Password, &user.Is_admin, &user.Attempted_problems, &user.Solved_problems)
 
 	if err != nil && err != sql.ErrNoRows {
-		return User{}, err
+		return models.User{}, err
 	}
 
 	if err == sql.ErrNoRows {
-		return User{}, errors.New("user does not exist")
+		return models.User{}, errors.New("user does not exist")
 	}
 
 	return user, nil

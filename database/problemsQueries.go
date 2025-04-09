@@ -3,13 +3,15 @@ package database
 import (
 	"database/sql"
 	"errors"
+	
+    "github.com/placeHolder143032/CodeChallengeHub/models"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 // this one is for admins since it doesnt check if its published or not
-func GetProblemsPageAdmin(m, n int) ([]Problem, error) {
-	var problems []Problem
+func GetProblemsPageAdmin(m, n int) ([]models.Problem, error) {
+	var problems []models.Problem
 	query := `
 		SELECT id, title
 		FROM questions
@@ -25,7 +27,7 @@ func GetProblemsPageAdmin(m, n int) ([]Problem, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var p Problem
+		var p models.Problem
 		if err := rows.Scan(&p.ID, &p.Title); err != nil {
 			return nil, err
 		}
@@ -40,8 +42,8 @@ func GetProblemsPageAdmin(m, n int) ([]Problem, error) {
 }
 
 // this one is for users since it does check if its published or not
-func GetProblemsPageUser(m, n int) ([]Problem, error) {
-	var problems []Problem
+func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
+	var problems []models.Problem
 	query := `
 		SELECT id, title
 		FROM questions
@@ -58,7 +60,7 @@ func GetProblemsPageUser(m, n int) ([]Problem, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var p Problem
+		var p models.Problem
 		if err := rows.Scan(&p.ID, &p.Title); err != nil {
 			return nil, err
 		}
@@ -73,7 +75,7 @@ func GetProblemsPageUser(m, n int) ([]Problem, error) {
 }
 
 // created at should be from the other side for less inconsistency
-func AddProblem(user_id int, problem Problem) error {
+func AddProblem(user_id int, problem models.Problem) error {
 	insertQuery := `
 	INSERT INTO problems (user_id, title, description_path, input_path, output_path, created_at, time_limit_ms, memory_limit_mb)
 	VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -101,8 +103,8 @@ func PublishProblem(id int) error {
 	return nil
 }
 
-func GetSingleProblem(id int) (Problem, error) {
-	var problem Problem
+func GetSingleProblem(id int) (models.Problem, error) {
+	var problem models.Problem
 	query := `
 	SELECT title, description_path, input_path, output_path, time_limit_ms, memory_limit_mb FROM users 
 	WHERE id = ? LIMIT 1
@@ -110,11 +112,11 @@ func GetSingleProblem(id int) (Problem, error) {
 	err := db.QueryRow(query, id).Scan(&problem.Title, problem.Description_path, problem.Input_path, problem.Output_path, problem.Time_limit_ms, problem.Memory_limit_mb)
 
 	if err != nil && err != sql.ErrNoRows {
-		return Problem{}, err
+		return models.Problem{}, err
 	}
 
 	if err == sql.ErrNoRows {
-		return Problem{}, errors.New("user does not exist")
+		return models.Problem{}, errors.New("user does not exist")
 	}
 
 	return problem, nil

@@ -1,7 +1,9 @@
-package database
+package models
+
 import(
 	"time"
 )
+
 type Submission struct {
 	ID            int       `json:"id"`
 	User_id       int       `json:"user_id"`

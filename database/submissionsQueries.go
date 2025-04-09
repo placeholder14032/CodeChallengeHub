@@ -4,10 +4,12 @@ import (
 	// "database/sql"
 	// "errors"
 
+	"github.com/placeHolder143032/CodeChallengeHub/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func SubmitCode(submission Submission) error {
+func SubmitCode(submission models.Submission) error {
 	insertQuery := `
 		INSERT INTO submissions (user_id, problem_id, code_path, created_at)
 		VALUES (?, ?, ?, ?)
@@ -20,7 +22,7 @@ func SubmitCode(submission Submission) error {
 	return nil
 }
 
-func UpdateSubmission(submission Submission) error {
+func UpdateSubmission(submission models.Submission) error {
 	query := `
 		UPDATE submissions
 		SET state = ?, runtime_ms = ?, memory_used = ?, error_message = ?
@@ -35,7 +37,7 @@ func UpdateSubmission(submission Submission) error {
 	return nil
 }
 
-func GetAllSubmissionsByUser(user_id int) ([]Submission, error) {
+func GetAllSubmissionsByUser(user_id int) ([]models.Submission, error) {
 	query := `
 		SELECT problem_id, code_path, state, created_at, runtime_ms, memory_used, error_message
 		FROM submissions
@@ -49,9 +51,9 @@ func GetAllSubmissionsByUser(user_id int) ([]Submission, error) {
 	}
 	defer rows.Close()
 
-	var submissions []Submission
+	var submissions []models.Submission
 	for rows.Next() {
-		var sub Submission
+		var sub models.Submission
 		err := rows.Scan(&sub.Problem_id, &sub.Code_path, &sub.State, &sub.Created_at, &sub.Runtime_ms, &sub.Memory_used, &sub.Error_message)
 		if err != nil {
 			return nil, err
