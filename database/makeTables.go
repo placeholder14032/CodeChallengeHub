@@ -11,10 +11,10 @@ var db *sql.DB
 func Connect() (*sql.DB, error) {
 	var err error
 
-	username := "Mahdi"           // your MySQL username
-	password := "Mahdi0441265367" // your MySQL password
+	username := "amabilis"           // your MySQL username
+	password := "amabilisfi20050921" // your MySQL password
 	hostname := "127.0.0.1:3306"
-	dbname := "codehub" // your MySQL database name
+	dbname := "codeChallemgeHub" // your MySQL database name
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", username, password, hostname, dbname)
 
@@ -58,7 +58,7 @@ func Connect() (*sql.DB, error) {
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		runtime_ms INT DEFAULT 0,
 		memory_used INT DEFAULT 0,
-		error_message TEXT DEFAULT ''
+		error_message TEXT
 	);
 	`
 

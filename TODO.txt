@@ -4,3 +4,4 @@ Left from front to be fully done:
 -- remove styles from html to css
 ** in case of error in signup and ... we might redirect and igonore the error kepp an eye on this
 
+-- [ ] implementing password doesn't match error in signup user

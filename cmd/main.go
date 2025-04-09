@@ -13,6 +13,12 @@ import (
 func main() {
     host := "localhost"
     port := "8090"
+
+    var err error
+	_, err = database.Connect()
+	if err != nil {
+		log.Fatalf("Error connecting to database: %v", err)
+	}
     
     // Initialize the application
     app := &web.Application{
@@ -31,8 +37,8 @@ func main() {
         log.Fatal(err)
     }
 
-    _, err := database.Connect()
-	if err != nil {
-		panic(err)
-	}
+    // _, err := database.Connect()
+	// if err != nil {
+	// 	panic(err)
+	// }
 }
