@@ -122,3 +122,29 @@ func ChangeUserPassword(id int, password string) error {
 
 	return nil
 }
+
+// TODO : add edit user
+
+func UpdateUserProblemStats() error {
+	query := `
+		UPDATE users u
+		SET 
+			attempted_problems = stats.attempted,
+			solved_problems = stats.solved
+		FROM (
+			SELECT 
+				user_id,
+				COUNT(DISTINCT problem_id) AS attempted,
+				COUNT(DISTINCT CASE WHEN state = 1 THEN problem_id END) AS solved
+			FROM submissions
+			GROUP BY user_id
+		) stats
+		WHERE u.id = stats.user_id;
+	`
+
+	_, err := db.Exec(query)
+	if err != nil {
+		return err
+	}
+	return nil
+}
