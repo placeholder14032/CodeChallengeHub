@@ -8,3 +8,5 @@ Left from front to be fully done:
 -- [ ] implementing: error handling in login
 
 -- [ ] check regex
+
+-- [ ] bcrypt
