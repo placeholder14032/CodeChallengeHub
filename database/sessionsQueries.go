@@ -1,9 +1,11 @@
 package database
 
 import (
-    "crypto/rand"
-    "encoding/base64"
-    // "time"
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
+
+	// "time"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -19,13 +21,14 @@ func GenerateSessionID() (string, error) {
 func CreateSession(userID int) (string, error) {
     sessionID, err := GenerateSessionID()
     if err != nil {
+        fmt.Println("Error generating session ID:", err)
         return "", err
     }
 
     // Create sessions table if it doesn't exist
     _, err = db.Exec(`
         CREATE TABLE IF NOT EXISTS sessions (
-            id VARCHAR(64) PRIMARY KEY,
+            session_id VARCHAR(64) PRIMARY KEY,
             user_id INTEGER NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             expires_at TIMESTAMP,
@@ -33,16 +36,17 @@ func CreateSession(userID int) (string, error) {
         )
     `)
     if err != nil {
+        fmt.Println("Error creating sessions table:", err)
         return "", err
     }
 
     // Insert new session
     _, err = db.Exec(`
-        INSERT INTO sessions (id, user_id, expires_at) 
+        INSERT INTO sessions (session_id, user_id, expires_at) 
         VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 24 HOUR))
     `, sessionID, userID)
-    
     if err != nil {
+        fmt.Println("Error inserting session into database:", err)
         return "", err
     }
 
@@ -54,7 +58,7 @@ func ValidateSession(sessionID string) (bool, error) {
     err := db.QueryRow(`
         SELECT EXISTS(
             SELECT 1 FROM sessions 
-            WHERE id = ? AND expires_at > NOW()
+            WHERE session_id = ? AND expires_at > NOW()
         )
     `, sessionID).Scan(&exists)
 

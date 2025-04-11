@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -12,6 +13,7 @@ import (
 // @route POST /api/auth/login-user
 // @access public
 func LoginUser(w http.ResponseWriter, r *http.Request) {
+	// fmt.Print("alskvhlafshvha")
     if r.Method != http.MethodPost {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
@@ -27,7 +29,9 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
     userID, sessionID, err := database.SignInUser(user)
     if err != nil {
-        http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+        // http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		errors.New(err.Error())
+		fmt.Print(err)
         return
     }
 
