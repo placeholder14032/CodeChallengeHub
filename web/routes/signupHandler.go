@@ -6,6 +6,8 @@ import (
 
 	"github.com/placeHolder143032/CodeChallengeHub/database"
 	"github.com/placeHolder143032/CodeChallengeHub/models"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // @desc creaing a new user account for signup
@@ -25,10 +27,18 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 	if (password==passwordConfirm){
 		// ok continue signing up
 
+		hashedPassword, err := HashPassword(password)
+		if err != nil {
+			http.Error(w, "Error hashing password", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Println("Hashed Password:", hashedPassword)
+
 		// create user
 		createdUser := models.User{
 			Username: username,
-			Password: password,
+			Password: hashedPassword,
 		}
 
 		database.SignUpUser(createdUser)
@@ -38,6 +48,14 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 	} else{
 		passwordMismatch()
 	}
+}
+
+func HashPassword(password string) (string, error) {
+    hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return "", err
+    }
+    return string(hash), nil
 }
 
 // TODO
