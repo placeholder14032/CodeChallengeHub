@@ -71,7 +71,7 @@ func GetUserInfo(id int) (models.User, error) {
 	SELECT username, password, is_admin, attempted_problems, solved_problems FROM users 
 	WHERE id = ? LIMIT 1
 	`
-	err := db.QueryRow(query, id).Scan(&user.Username, &user.Password, &user.Is_admin, &user.Attempted_problems, &user.Solved_problems)
+	err := db.QueryRow(query, id).Scan(&user.Username, &user.Password, &user.IsAdmin, &user.AttemptedProblems, &user.SolvedProblems)
 
 	if err != nil && err != sql.ErrNoRows {
 		return models.User{}, err

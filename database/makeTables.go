@@ -29,9 +29,9 @@ func Connect() (*sql.DB, error) {
 		id integer not null primary key AUTO_INCREMENT, 
 		username varchar(50) not null unique, 
 		password varchar(255) not null,
-		is_admin BOOLEAN DEFAULT 0,
-		attempted_problems INT DEFAULT 0, 
-		solved_problems INT DEFAULT 0
+		isAdmin BOOLEAN DEFAULT 0,
+		attemptedProblems INT DEFAULT 0, 
+		solvedProblems INT DEFAULT 0
 	);
     `
 	makeProblems := `

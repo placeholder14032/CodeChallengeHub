@@ -4,6 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+    "database/sql"
+
+    "github.com/placeHolder143032/CodeChallengeHub/models"
 
 	// "time"
 	_ "github.com/go-sql-driver/mysql"
@@ -67,4 +70,34 @@ func ValidateSession(sessionID string) (bool, error) {
     }
 
     return exists, nil
+}
+
+func GetCurrentUser(sessionID string) (*models.User, error) {
+    // First, get user_id from sessions table
+    var userID int
+    err := db.QueryRow(`
+        SELECT user_id FROM sessions 
+        WHERE session_id = ? AND expires_at > NOW()
+    `, sessionID).Scan(&userID)
+    
+    if err != nil {
+        if err == sql.ErrNoRows {
+            return nil, fmt.Errorf("invalid or expired session")
+        }
+        return nil, err
+    }
+
+    // Then get user details
+    var user models.User
+    err = db.QueryRow(`
+        SELECT id, username, attempted_problems, solved_problems, is_admin 
+        FROM users 
+        WHERE id = ?
+    `, userID).Scan(&user.ID, &user.Username, &user.AttemptedProblems, &user.SolvedProblems, &user.IsAdmin)
+    
+    if err != nil {
+        return nil, err
+    }
+
+    return &user, nil
 }
