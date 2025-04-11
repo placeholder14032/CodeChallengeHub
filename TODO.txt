@@ -9,4 +9,6 @@ Left from front to be fully done:
 
 -- [ ] check regex
 
--- [ ] bcrypt
+-- [*] bcrypt
+
+// for admin login we are not storing hashed password i guess later while creating admin user we need to bcrypt password or sth
