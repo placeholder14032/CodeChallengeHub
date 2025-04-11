@@ -19,13 +19,15 @@ func  LoginUser(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 	fmt.Print("Username:", username)
 	fmt.Println(", Password:", password)
+	
+	// idea 1: test if we can hash here and compare in query stuff -> // doesn't work
+	// idea 2: in users query
 
 	// create user
 	targetUser := models.User{
 		Username: username,
 		Password: password,
 	}
-
 	id,err := database.SignInUser(targetUser)
 
 	targetUser.ID = id

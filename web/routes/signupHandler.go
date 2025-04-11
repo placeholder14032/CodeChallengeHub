@@ -33,7 +33,7 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println("Hashed Password:", hashedPassword)
+		// fmt.Println("Hashed Password:", hashedPassword)
 
 		// create user
 		createdUser := models.User{

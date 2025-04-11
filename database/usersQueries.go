@@ -6,6 +6,8 @@ import (
 
 	"github.com/placeHolder143032/CodeChallengeHub/models"
 
+	"golang.org/x/crypto/bcrypt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -45,11 +47,20 @@ func SignInUser(user models.User) (int, error) {
 		return 0, errors.New("user does not exist")
 	}
 
-	if password != user.Password {
+	// if password != user.Password {
+	// 	return 0, errors.New("wrong password")
+	// }
+
+	if !VerifyPassword(user.Password,password) {
 		return 0, errors.New("wrong password")
 	}
 
 	return id, nil
+}
+
+func VerifyPassword(password, hash string) bool {
+    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+    return err == nil
 }
 
 func GetUserInfo(id int) (models.User, error) {
