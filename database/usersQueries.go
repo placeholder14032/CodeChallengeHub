@@ -33,29 +33,31 @@ func SignUpUser(user models.User) error {
 	return nil
 }
 
-func SignInUser(user models.User) (int, error) {
-	var id int
-	var password string
-	query := "SELECT id, password FROM users WHERE username = ? LIMIT 1"
-	err := db.QueryRow(query, user.Username).Scan(&id, &password)
+func SignInUser(user models.User) (int, string, error) {
+    var id int
+    var password string
+    query := "SELECT id, password FROM users WHERE username = ? LIMIT 1"
+    err := db.QueryRow(query, user.Username).Scan(&id, &password)
 
-	if err != nil && err != sql.ErrNoRows {
-		return 0, err
-	}
+    if err != nil && err != sql.ErrNoRows {
+        return 0, "", err
+    }
 
-	if err == sql.ErrNoRows {
-		return 0, errors.New("user does not exist")
-	}
+    if err == sql.ErrNoRows {
+        return 0, "", errors.New("user does not exist")
+    }
 
-	// if password != user.Password {
-	// 	return 0, errors.New("wrong password")
-	// }
+    if !VerifyPassword(user.Password, password) {
+        return 0, "", errors.New("wrong password")
+    }
 
-	if !VerifyPassword(user.Password,password) {
-		return 0, errors.New("wrong password")
-	}
+    // Create session
+    sessionID, err := CreateSession(id)
+    if err != nil {
+        return 0, "", errors.New("Failed to create session")
+    }
 
-	return id, nil
+    return id, sessionID, nil
 }
 
 func VerifyPassword(password, hash string) bool {

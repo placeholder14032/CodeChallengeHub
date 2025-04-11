@@ -11,35 +11,42 @@ import (
 // @desc login and check password for signin user
 // @route POST /api/auth/login-user
 // @access public
-func  LoginUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("Login user")
+func LoginUser(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
 
-	// Parse the request body
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-	fmt.Print("Username:", username)
-	fmt.Println(", Password:", password)
-	
-	// idea 1: test if we can hash here and compare in query stuff -> // doesn't work
-	// idea 2: in users query
+    username := r.FormValue("username")
+    password := r.FormValue("password")
 
-	// create user
-	targetUser := models.User{
-		Username: username,
-		Password: password,
-	}
-	id,err := database.SignInUser(targetUser)
+    user := models.User{
+        Username: username,
+        Password: password,
+    }
 
-	targetUser.ID = id
+    userID, sessionID, err := database.SignInUser(user)
+    if err != nil {
+        http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+        return
+    }
 
-	// TODO
-	if(err!=nil){
-		fmt.Println("Error:", err)
-	}else{
-	// Redirect to profile page with status code 303 (See Other)
-	http.Redirect(w, r, "/profile", http.StatusSeeOther)
-	}
+	fmt.Println("User ID:", userID) //  idk how to use it or write it in db
 
+    // Set session cookie
+    cookie := http.Cookie{
+        Name:     "session_id",
+        Value:    sessionID,
+        Path:     "/",
+        HttpOnly: true,
+        Secure:   false, // Set to true in production later
+        MaxAge:   24 * 60 * 60, // 1 day
+    }
+
+    http.SetCookie(w, &cookie)
+
+    // Redirect to profile page
+    http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
 // @desc login and check password for signin admin user
@@ -60,7 +67,9 @@ func  LoginAdmin(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	}
 
-	id,err := database.SignInUser(targetUser)
+	id,sessionID,err := database.SignInUser(targetUser)
+
+	fmt.Print("Session ID:", sessionID) //  idk how to use it for now
 
 	targetUser.ID = id
 	// targetUser.Is_admin = 1

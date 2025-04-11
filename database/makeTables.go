@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -62,6 +63,16 @@ func Connect() (*sql.DB, error) {
 	);
 	`
 
+	makeSessions := `
+	CREATE TABLE IF NOT EXISTS sessions (
+    session_id VARCHAR(64) PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+	);
+	`
+
 	/*
 
 		states in submission
@@ -94,5 +105,10 @@ func Connect() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	_, err = db.Exec(makeSessions)
+	if err != nil {
+    	return nil, err
+	}
 	return db, nil
 }
+

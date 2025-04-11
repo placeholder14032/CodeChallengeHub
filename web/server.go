@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/placeHolder143032/CodeChallengeHub/web/routes"
+    "github.com/placeHolder143032/CodeChallengeHub/middleware"
+
 )
 
 type Server struct {
@@ -43,14 +45,20 @@ func (a *Application) routes() http.Handler {
     mux.HandleFunc("/login-admin", routes.GoLoginAdmin) // Login page for admin users
     mux.HandleFunc("/register-user", routes.GoSignupUser)   // Login page for regular users
 
-    mux.HandleFunc("/profile", routes.GoProfilePage) // Login page for admin users
+    // mux.HandleFunc("/profile", routes.GoProfilePage) // Login page for admin users
     
     mux.HandleFunc("/problem", routes.GoProblemPage) // Login page for admin users
-    mux.HandleFunc("/submit_answer", routes.GoSubmitAnswer) // Go to submit answer page
-    mux.HandleFunc("/problems", routes.GoProblemsListPage) // all problems list page
+    // mux.HandleFunc("/submit_answer", routes.GoSubmitAnswer) // Go to submit answer page
+    // mux.HandleFunc("/problems", routes.GoProblemsListPage) // all problems list page
     mux.HandleFunc("/submissions", routes.GoSubmissionsPage) // my submissions page
     mux.HandleFunc("/problems/add", routes.GoAddProblemPage) // add problem page
     mux.HandleFunc("/submission", routes.GoSubmissionView) // view submission page
+
+
+        // Protected routes
+    mux.HandleFunc("/profile", middleware.RequireAuth(routes.GoProfilePage))
+    mux.HandleFunc("/problems", middleware.RequireAuth(routes.GoProblemsListPage))
+    mux.HandleFunc("/submit_answer", middleware.RequireAuth(routes.GoSubmitAnswer))
 
     mux.HandleFunc("/api/auth/login-user", routes.LoginUser)    // User login
     mux.HandleFunc("/api/auth/login-admin", routes.LoginAdmin)    // Admin login
