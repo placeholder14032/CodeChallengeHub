@@ -1,15 +1,15 @@
 package routes
 
 import (
+	"html/template"
+	"log"
 	"math"
 	"net/http"
 	"strconv"
 	"time"
-	"log"
-	"html/template"
 
-	"github.com/placeHolder143032/CodeChallengeHub/models"
 	"github.com/placeHolder143032/CodeChallengeHub/database"
+	"github.com/placeHolder143032/CodeChallengeHub/models"
 )
 
 // @desc get landing(welcome) page html
@@ -84,7 +84,7 @@ func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
 // @desc get HTML page for all problems with pagination
 // @route GET /problems?page=<number>
 // @access private (you can only access this page if you are logged in)
-func GoProblemsListPage(w http.ResponseWriter, r *http.Request) {
+func GoProblemsListPageUser(w http.ResponseWriter, r *http.Request) {
 	// Get page number from query parameters, default to 1 if not provided
 	page := r.URL.Query().Get("page")
 	pageNum := 1
@@ -96,25 +96,55 @@ func GoProblemsListPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	const itemsPerPage = 10
+
 	// Get problems with proper pagination
-	problems, err := database.GetProblemsPageUser(pageNum, 10) // 10 items per page
+	problems, err := database.GetProblemsPageUser(pageNum, itemsPerPage)
 	if err != nil {
 		log.Printf("Error fetching problems: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
+	// Get total number of problems for pagination
+	totalProblems, err := database.GetTotalProblemsCount()
+	if err != nil {
+		log.Printf("Error getting total problems count: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Calculate pagination details
+	totalPages := int(math.Ceil(float64(totalProblems) / float64(itemsPerPage)))
+	if pageNum > totalPages {
+		pageNum = totalPages
+	}
+
+	// Generate page numbers for navigation
+	var pageNumbers []int
+	for i := 1; i <= totalPages; i++ {
+		pageNumbers = append(pageNumbers, i)
+	}
+
 	// Setup template data
 	data := struct {
-		Problems []models.Problem
-		Page     int
+		Problems    []models.Problem
+		CurrentPage int
+		PrevPage    int
+		NextPage    int
+		TotalPages  int
+		PageNumbers []int
 	}{
-		Problems: problems,
-		Page:     pageNum,
+		Problems:    problems,
+		CurrentPage: pageNum,
+		PrevPage:    pageNum - 1,
+		NextPage:    pageNum + 1,
+		TotalPages:  totalPages,
+		PageNumbers: pageNumbers,
 	}
 
 	// Parse and execute template
-	tmpl, err := template.ParseFiles("ui/html/problems.html")
+	tmpl, err := template.ParseFiles("ui/html/problemsList.html")
 	if err != nil {
 		log.Printf("Template parse error: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

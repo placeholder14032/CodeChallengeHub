@@ -55,7 +55,7 @@ func (a *Application) routes() http.Handler {
     // Protected routes
     mux.HandleFunc("/profile", middleware.RequireAuth(routes.GoProfilePage))
 
-    mux.HandleFunc("/problems", middleware.RequireAuth(routes.GoProblemsListPage))
+    mux.HandleFunc("/allproblems-user", middleware.RequireAuth(routes.GoProblemsListPageUser))
     mux.HandleFunc("/add-problem", middleware.RequireAuth(routes.AddProblem)) // add problem page
     mux.HandleFunc("/problem", routes.GoProblemPage) // Login page for admin users
 

@@ -14,7 +14,7 @@ func GetProblemsPageAdmin(m, n int) ([]models.Problem, error) {
 	var problems []models.Problem
 	query := `
 		SELECT id, title
-		FROM questions
+		FROM problems
 		ORDER BY created_at DESC
 		LIMIT ? OFFSET ?
 	`
@@ -46,7 +46,7 @@ func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
 	var problems []models.Problem
 	query := `
 		SELECT id, title
-		FROM questions
+		FROM problems
 		WHERE is_published = true
 		ORDER BY created_at DESC
 		LIMIT ? OFFSET ?;
@@ -168,4 +168,13 @@ func EditProblem(db *sql.DB, user_id, problem_id int, title string, time_limit_m
 	}
 
 	return nil
+}
+
+func GetTotalProblemsCount() (int, error) {
+    var count int
+    err := db.QueryRow("SELECT COUNT(*) FROM problems WHERE is_published = true").Scan(&count)
+    if err != nil {
+        return 0, err
+    }
+    return count, nil
 }
