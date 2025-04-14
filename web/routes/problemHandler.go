@@ -31,7 +31,7 @@ type FormData struct {
 // @access private
 func AddProblem(w http.ResponseWriter, r *http.Request) {
 	// Parse the HTML template
-	tmpl, err := template.ParseFiles("templates/add_problem.html")
+	tmpl, err := template.ParseFiles("ui/html/add_problem.html")
 	if err != nil {
 		log.Printf("Template parse error: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -199,10 +199,4 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 
 	// Redirect to problems list
 	http.Redirect(w, r, "/problems", http.StatusSeeOther)
-}
-
-// RegisterRoutes sets up the routes with middleware
-func RegisterRoutes() {
-	http.HandleFunc("/add_problem", middleware.RequireAuth(AddProblem))
-	// Add other routes as needed
 }
