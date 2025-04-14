@@ -242,16 +242,6 @@ func GoSubmissionsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// @desc get HTML page for adding a new problem
-// @route GET /add_problem
-// @access private (only logged-in users)
-func GoAddProblemPage(w http.ResponseWriter, r *http.Request) {
-    if r.Method == http.MethodGet {
-        renderTemplate(w, "add_problem.html", nil)
-        return
-    }
-}
-
 // @desc get HTML page for a specific submission
 // @route GET /submission?id=<submission_id>
 // @access private (only accessible to the submission owner or admin)

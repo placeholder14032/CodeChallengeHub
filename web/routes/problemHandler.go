@@ -1,16 +1,30 @@
 package routes
 
 import (
-	"fmt"
-	"net/http"
+	"html/template"
 	"log"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
-	// "filepath"	
-	"os"
+	"fmt"
 
+	"github.com/placeHolder143032/CodeChallengeHub/database"
+	"github.com/placeHolder143032/CodeChallengeHub/middleware"
 	"github.com/placeHolder143032/CodeChallengeHub/models"
 )
+
+// FormData holds form values for repopulation on error
+type FormData struct {
+	Title       string
+	Difficulty  string
+	Statement   string
+	TimeLimit   string
+	MemoryLimit string
+	Input       string
+	Output      string
+}
 
 // @desc add problem to the database
 // @route GET,POST /add_problem
@@ -98,7 +112,7 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get user ID from context
-	userID, ok := r.Context().Value(auth.UserIDKey).(int)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(int)
 	if !ok {
 		log.Println("User ID not found in context")
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
@@ -108,18 +122,64 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Create directory for problem files
+	basePath := "problems"
+	timestamp := time.Now().Unix()
+	problemDir := filepath.Join(basePath, fmt.Sprintf("problem_%d_%d", userID, timestamp))
+	if err := os.MkdirAll(problemDir, 0755); err != nil {
+		log.Printf("Failed to create directory %s: %v", problemDir, err)
+		tmpl.Execute(w, struct{ Error string; Form FormData }{
+			Error: "Failed to save problem files",
+			Form:  form,
+		})
+		return
+	}
+
+	// Define file paths
+	descriptionPath := filepath.Join(problemDir, "description.txt")
+	inputPath := filepath.Join(problemDir, "input.txt")
+	outputPath := filepath.Join(problemDir, "output.txt")
+
+	// Save problem content to files
+	if err := os.WriteFile(descriptionPath, []byte(form.Statement), 0644); err != nil {
+		log.Printf("Failed to write description file %s: %v", descriptionPath, err)
+		tmpl.Execute(w, struct{ Error string; Form FormData }{
+			Error: "Failed to save problem files",
+			Form:  form,
+		})
+		return
+	}
+
+	if err := os.WriteFile(inputPath, []byte(form.Input), 0644); err != nil {
+		log.Printf("Failed to write input file %s: %v", inputPath, err)
+		tmpl.Execute(w, struct{ Error string; Form FormData }{
+			Error: "Failed to save problem files",
+			Form:  form,
+		})
+		return
+	}
+
+	if err := os.WriteFile(outputPath, []byte(form.Output), 0644); err != nil {
+		log.Printf("Failed to write output file %s: %v", outputPath, err)
+		tmpl.Execute(w, struct{ Error string; Form FormData }{
+			Error: "Failed to save problem files",
+			Form:  form,
+		})
+		return
+	}
+
 	// Create problem struct
 	problem := models.Problem{
-		UserId:        userID,
-		Title:         form.Title,
-		Difficulty:    form.Difficulty,
-		Statement:     form.Statement,
-		Input:         form.Input,
-		Output:        form.Output,
-		CreatedAt:     time.Now(),
-		IsPublished:   false, // Draft by default
-		TimeLimitMs:   timeLimit,
-		MemoryLimitMb: memoryLimit,
+		UserID:          userID,
+		Title:           form.Title,
+		// Difficulty:      form.Difficulty, // Uncomment if database supports it
+		DescriptionPath: descriptionPath,
+		InputPath:       inputPath,
+		OutputPath:      outputPath,
+		CreatedTime:     time.Now(),
+		IsPublished:     false,
+		TimeLimit:       timeLimit,
+		MemoryLimit:     memoryLimit,
 	}
 
 	// Save problem to database
@@ -129,6 +189,8 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 			Error: "Failed to save problem",
 			Form:  form,
 		})
+		// Cleanup files on database failure
+		os.RemoveAll(problemDir)
 		return
 	}
 
@@ -137,4 +199,10 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 
 	// Redirect to problems list
 	http.Redirect(w, r, "/problems", http.StatusSeeOther)
+}
+
+// RegisterRoutes sets up the routes with middleware
+func RegisterRoutes() {
+	http.HandleFunc("/add_problem", middleware.RequireAuth(AddProblem))
+	// Add other routes as needed
 }

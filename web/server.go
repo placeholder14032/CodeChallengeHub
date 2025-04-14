@@ -58,11 +58,10 @@ func (a *Application) routes() http.Handler {
     mux.HandleFunc("/problems", middleware.RequireAuth(routes.GoProblemsListPage))
     mux.HandleFunc("/add-problem", middleware.RequireAuth(routes.AddProblem)) // add problem page
     mux.HandleFunc("/problem", routes.GoProblemPage) // Login page for admin users
-    mux.HandleFunc("/api/problems/add",  middleware.RequireAuth(routes.GoAddProblemPage)) // add problem page
 
 
     mux.HandleFunc("/my-submissions",  middleware.RequireAuth(routes.GoSubmissionsPage)) // my submissions page
-    mux.HandleFunc("/api/submit_answer",  middleware.RequireAuth(routes.SubmitAnswer)) // Go to submit answer page
+    // mux.HandleFunc("/api/submit_answer",  middleware.RequireAuth(routes.SubmitAnswer)) // Go to submit answer page
 
 
     return mux

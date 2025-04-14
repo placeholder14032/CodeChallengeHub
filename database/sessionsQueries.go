@@ -56,21 +56,22 @@ func CreateSession(userID int) (string, error) {
     return sessionID, nil
 }
 
-func ValidateSession(sessionID string) (int,bool, error) {
-    var exists bool
+func ValidateSession(sessionID string) (int, bool, error) {
     var id int
     err := db.QueryRow(`
-        SELECT EXISTS(
-            SELECT 1 FROM sessions 
-            WHERE session_id = ? AND expires_at > NOW()
-        )
-    `, sessionID).Scan(&exists,&id)
+        SELECT user_id 
+        FROM sessions 
+        WHERE session_id = ? AND expires_at > NOW()
+    `, sessionID).Scan(&id)
 
+    if err == sql.ErrNoRows {
+        return 0, false, nil // Session doesn't exist or is expired
+    }
     if err != nil {
-        return 0,false, err
+        return 0, false, err // Other database errors
     }
 
-    return id,exists, nil
+    return id, true, nil // Session is valid
 }
 
 

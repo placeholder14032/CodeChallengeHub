@@ -15,5 +15,4 @@ type Problem struct {
 	IsPublished     bool      `json:"is_published"`
 	TimeLimit	   int       `json:"time_limit"`
 	MemoryLimit  int       `json:"memory_limit"`
-	Difficulty		string  `json:"difficulty`
 }
