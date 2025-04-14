@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+    
+    "github.com/placeHolder143032/CodeChallengeHub/models"
+
 )
 
 // @desc get landing(welcome) page html
@@ -94,22 +97,22 @@ func GoProblemsListPage(w http.ResponseWriter, r *http.Request) {
 
     // TODO: Fetch problems from your database
     // For now, using static data
-    allProblems := []Problem{
-        {ID: "1", Title: "Two Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
-        {ID: "2", Title: "Add Two Numbers", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "3", Title: "Longest Substring", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "4", Title: "Three Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
-        {ID: "5", Title: "Gorg Ali", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "7", Title: "DFS", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "8", Title: "A*", Difficulty: "Easy", Solved: false, Submissions: 0},
-        {ID: "9", Title: "Othello", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "10", Title: "Project", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "11", Title: "Super Hexagon", Difficulty: "Easy", Solved: false, Submissions: 0},
-        {ID: "12", Title: "Super Mario", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "13", Title: "Justhis", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "14", Title: "Big Mouth", Difficulty: "Easy", Solved: false, Submissions: 0},
-        {ID: "15", Title: "New Face", Difficulty: "Medium", Solved: false, Submissions: 0},
-        {ID: "16", Title: "Alsfnnlsnfcnasf", Difficulty: "Medium", Solved: false, Submissions: 0},
+    allProblems := []models.Problem{
+        // {ID: "1", Title: "Two Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
+        // {ID: "2", Title: "Add Two Numbers", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "3", Title: "Longest Substring", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "4", Title: "Three Sum", Difficulty: "Easy", Solved: false, Submissions: 0},
+        // {ID: "5", Title: "Gorg Ali", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "7", Title: "DFS", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "8", Title: "A*", Difficulty: "Easy", Solved: false, Submissions: 0},
+        // {ID: "9", Title: "Othello", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "10", Title: "Project", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "11", Title: "Super Hexagon", Difficulty: "Easy", Solved: false, Submissions: 0},
+        // {ID: "12", Title: "Super Mario", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "13", Title: "Justhis", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "14", Title: "Big Mouth", Difficulty: "Easy", Solved: false, Submissions: 0},
+        // {ID: "15", Title: "New Face", Difficulty: "Medium", Solved: false, Submissions: 0},
+        // {ID: "16", Title: "Alsfnnlsnfcnasf", Difficulty: "Medium", Solved: false, Submissions: 0},
     }
 
     // Calculate pagination details
@@ -139,7 +142,7 @@ func GoProblemsListPage(w http.ResponseWriter, r *http.Request) {
 
     // Prepare data for template
     data := struct {
-        Problems    []Problem
+        Problems    []models.Problem
         CurrentPage int
         PrevPage    int
         NextPage    int
@@ -238,16 +241,6 @@ func GoSubmissionsPage(w http.ResponseWriter, r *http.Request) {
     renderTemplate(w, "my_submission.html", data)
 }
 
-
-// @desc get HTML page for adding a new problem
-// @route GET /add_problem
-// @access private (only logged-in users)
-func GoAddProblemPage(w http.ResponseWriter, r *http.Request) {
-    if r.Method == http.MethodGet {
-        renderTemplate(w, "add_problem.html", nil)
-        return
-    }
-}
 
 // @desc get HTML page for a specific submission
 // @route GET /submission?id=<submission_id>

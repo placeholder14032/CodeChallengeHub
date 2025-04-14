@@ -169,6 +169,25 @@
                 grid-template-columns: 1fr;
             }
         }
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            background-color: #ffeb99; 
+            color: #2b4c7e;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-color: #ffe066;
+            border-style: solid;
+        }
+
+        .cta-button:hover {
+            background-color: #ffe066;
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
 <body>
@@ -200,6 +219,16 @@
                 <h3>Questions Solved</h3>
                 <p id="solved">{{.SolvedProblems}}</p>
             </div>
+
+            <a href="/my-submissions" class="cta-button">View My Submissions</a>
+            <a href="/logout" class="cta-button">Logout</a>
+            <!-- <a href="/edit-profile" class="cta-button">Edit Profile</a>
+            <a href="/change-password" class="cta-button">Change Password</a> -->
+            <form action="/add-problem" method="POST" style="display: inline;">
+                <button type="submit" class="cta-button" style="cursor: pointer;">Add Problem</button>
+            </form>
+            <a href="/view-problems" class="cta-button">View Problems</a>
+            
         </div>
 
         <!-- Admin controls - only visible to administrators -->

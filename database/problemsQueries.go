@@ -77,11 +77,11 @@ func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
 // created at should be from the other side for less inconsistency
 func AddProblem(user_id int, problem models.Problem) error {
 	insertQuery := `
-	INSERT INTO problems (user_id, title, description_path, input_path, output_path, created_at, time_limit_ms, memory_limit_mb)
+	INSERT INTO problems (userID, title, descriptionPath, inputPath, outputPath, createdTime, timeLimit, memoryLimit)
 	VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
-	_, err := db.Exec(insertQuery, user_id, problem.Title, problem.Description_path, problem.Input_path, problem.Output_path, problem.Created_at, problem.Time_limit_ms, problem.Memory_limit_mb)
+	_, err := db.Exec(insertQuery, problem.UserID, problem.Title, problem.DescriptionPath, problem.InputPath, problem.OutputPath, problem.CreatedTime, problem.TimeLimit, problem.MemoryLimit)
 
 	if err != nil {
 		return err
@@ -109,8 +109,8 @@ func GetSingleProblem(id int) (models.Problem, error) {
 	SELECT title, description_path, input_path, output_path, time_limit_ms, memory_limit_mb FROM users 
 	WHERE id = ? LIMIT 1
 	`
-	err := db.QueryRow(query, id).Scan(&problem.Title, problem.Description_path, problem.Input_path, problem.Output_path, problem.Time_limit_ms, problem.Memory_limit_mb)
 
+	err := db.QueryRow(query, id).Scan(&problem.Title, problem.DescriptionPath, problem.InputPath, problem.OutputPath, problem.CreatedTime, problem.TimeLimit, problem.MemoryLimit)
 	if err != nil && err != sql.ErrNoRows {
 		return models.Problem{}, err
 	}
