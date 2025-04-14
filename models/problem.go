@@ -11,8 +11,9 @@ type Problem struct {
 	DescriptionPath string    `json:"description_path"`
 	InputPath       string    `json:"input_path"`
 	OutputPath      string    `json:"output_path"`
-	CreatedTime       time.Time `json:"created_at"`
+	CreatedTime       time.Time `json:"created_time"`
 	IsPublished     bool      `json:"is_published"`
-	TimeLimit	   int       `json:"time_limit_ms"`
-	MemoryLimit  int       `json:"memory_limit_mb"`
+	TimeLimit	   int       `json:"time_limit"`
+	MemoryLimit  int       `json:"memory_limit"`
+	Difficulty		string  `json:"difficulty`
 }

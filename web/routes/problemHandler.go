@@ -98,7 +98,7 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get user ID from context
-	userID, ok := r.Context().Value(middleware.UserIDKey).(int)
+	userID, ok := r.Context().Value(auth.UserIDKey).(int)
 	if !ok {
 		log.Println("User ID not found in context")
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
@@ -110,7 +110,7 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 
 	// Create problem struct
 	problem := models.Problem{
-		User_id:        userID,
+		UserId:        userID,
 		Title:         form.Title,
 		Difficulty:    form.Difficulty,
 		Statement:     form.Statement,
