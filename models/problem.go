@@ -8,7 +8,6 @@ type Problem struct {
 	ID               int       `json:"id"`
 	UserID          int       `json:"user_id"`
 	Title            string    `json:"title"`
-	Difficulty      string	`json:"difficulty"`
 	DescriptionPath string    `json:"description_path"`
 	InputPath       string    `json:"input_path"`
 	OutputPath      string    `json:"output_path"`

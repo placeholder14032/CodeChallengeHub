@@ -75,19 +75,36 @@ func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
 }
 
 // created at should be from the other side for less inconsistency
-func AddProblem(user_id int, problem models.Problem) error {
-	insertQuery := `
-    INSERT INTO problems (user_id, title, difficulty, description_path, input_path, output_path, created_at, time_limit_ms, memory_limit_mb)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+func AddProblem(userID int, problem models.Problem) error {
+    query := `
+        INSERT INTO problems (
+            user_id,
+            title,
+            description_path,
+            input_path,
+            output_path,
+            created_at,
+            is_published,
+            time_limit_ms,
+            memory_limit_mb
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
-
-	_, err := db.Exec(insertQuery, problem.UserID, problem.Title, problem.Difficulty, problem.DescriptionPath, problem.InputPath, problem.OutputPath, problem.CreatedTime, problem.TimeLimit, problem.MemoryLimit)
-	if err != nil {
-		return err
-	}
-
-	return nil
+    
+    _, err := db.Exec(query,
+        problem.UserID,
+        problem.Title,
+        problem.DescriptionPath,
+        problem.InputPath,
+        problem.OutputPath,
+        problem.CreatedTime,
+        problem.IsPublished,
+        problem.TimeLimit,
+        problem.MemoryLimit,
+    )
+    
+    return err
 }
+
 func PublishProblem(id int) error {
 	query := `
 	UPDATE problems SET is_published = NOT is_published

@@ -225,7 +225,6 @@ import (
 // FormData holds form values for repopulation on error
 type FormData struct {
 	Title       string
-	Difficulty  string
 	Statement   string
 	TimeLimit   string
 	MemoryLimit string
@@ -281,18 +280,17 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 	// Extract form values
 	form := FormData{
 		Title:       r.FormValue("title"),
-		Difficulty:  r.FormValue("difficulty"),
 		Statement:   r.FormValue("statement"),
 		TimeLimit:   r.FormValue("time_limit"),
 		MemoryLimit: r.FormValue("memory_limit"),
 		Input:       r.FormValue("input"),
 		Output:      r.FormValue("output"),
 	}
-	log.Printf("AddProblem: Form data extracted: Title=%s, Difficulty=%s, TimeLimit=%s, MemoryLimit=%s",
-		form.Title, form.Difficulty, form.TimeLimit, form.MemoryLimit)
+	log.Printf("AddProblem: Form data extracted: Title=%s, TimeLimit=%s, MemoryLimit=%s",
+		form.Title, form.TimeLimit, form.MemoryLimit)
 
 	// Validate required fields
-	if form.Title == "" || form.Difficulty == "" || form.Statement == "" ||
+	if form.Title == "" || form.Statement == "" ||
 		form.TimeLimit == "" || form.MemoryLimit == "" || form.Input == "" || form.Output == "" {
 		log.Printf("AddProblem: Validation failed: Missing required fields")
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
@@ -302,17 +300,6 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("AddProblem: Required fields validated")
-
-	// Validate difficulty
-	if form.Difficulty != "Easy" && form.Difficulty != "Medium" && form.Difficulty != "Hard" {
-		log.Printf("AddProblem: Validation failed: Invalid difficulty level: %s", form.Difficulty)
-		tmpl.Execute(w, struct{ Error string; Form FormData }{
-			Error: "Invalid difficulty level",
-			Form:  form,
-		})
-		return
-	}
-	log.Printf("AddProblem: Difficulty validated: %s", form.Difficulty)
 
 	// Validate time limit
 	timeLimit, err := strconv.Atoi(form.TimeLimit)
@@ -413,7 +400,6 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 	problem := models.Problem{
 		UserID:          userID,
 		Title:           form.Title,
-		Difficulty:      form.Difficulty,
 		DescriptionPath: descriptionPath,
 		InputPath:       inputPath,
 		OutputPath:      outputPath,
@@ -444,5 +430,5 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 
 	// Redirect to problems list
 	log.Printf("AddProblem: Redirecting to /problems")
-	http.Redirect(w, r, "/problems", http.StatusSeeOther)
+	// http.Redirect(w, r, "/problems", http.StatusSeeOther)
 }
