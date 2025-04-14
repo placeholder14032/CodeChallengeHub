@@ -212,8 +212,7 @@
         <thead>
           <tr>
             <th>Title</th>
-            <th>Time Limit</th>
-            <th>Memory Limit</th>
+            <th>Time</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -222,10 +221,11 @@
           {{range .Problems}}
           <tr>
             <td><a href="/problem?id={{.ID}}">{{.Title}}</a></td>
-            <td>{{.TimeLimit}}ms</td>
-            <td>{{.MemoryLimit}}MB</td>
+            <td>{{.CreatedTime.Format "2006-01-02 15:04:05"}}</td>
             <td>{{if .IsPublished}}Published{{else}}Draft{{end}}</td>
-            <td><a href="/problem?id={{.ID}}" class="solve-button">Solve</a></td>
+            <td>
+              <a href="/problem?id={{.ID}}" class="solve-button">Solve</a>
+            </td>
           </tr>
           {{end}}
         </tbody>
@@ -235,15 +235,11 @@
       <div class="pagination">
         {{if gt .CurrentPage 1}}
         <a href="?page={{.PrevPage}}">« Previous</a>
-        {{end}} 
-        {{range .PageNumbers}} 
-        {{if eq . $.CurrentPage}}
+        {{end}} {{range .PageNumbers}} {{if eq . $.CurrentPage}}
         <span class="current">{{.}}</span>
         {{else}}
         <a href="?page={{.}}">{{.}}</a>
-        {{end}} 
-        {{end}} 
-        {{if lt .CurrentPage .TotalPages}}
+        {{end}} {{end}} {{if lt .CurrentPage .TotalPages}}
         <a href="?page={{.NextPage}}">Next »</a>
         {{end}}
       </div>

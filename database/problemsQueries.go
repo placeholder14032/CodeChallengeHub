@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/placeHolder143032/CodeChallengeHub/models"
 
@@ -45,31 +46,46 @@ func GetProblemsPageAdmin(m, n int) ([]models.Problem, error) {
 func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
     var problems []models.Problem
     query := `
-        SELECT id, title, time_limit_ms, memory_limit_mb, created_at, is_published
+        SELECT 
+            id, 
+            user_id,
+            title, 
+            created_at,
+            is_published
         FROM problems
         ORDER BY created_at DESC
-        LIMIT ? OFFSET ?;
+        LIMIT ? OFFSET ?
     `
     offset := (m - 1) * n
 
     rows, err := db.Query(query, n, offset)
     if err != nil {
+        log.Printf("Query error: %v", err)
         return nil, err
     }
     defer rows.Close()
 
     for rows.Next() {
         var p models.Problem
-        if err := rows.Scan(&p.ID, &p.Title, &p.TimeLimit, &p.MemoryLimit, &p.CreatedTime, &p.IsPublished); err != nil {
+        if err := rows.Scan(
+            &p.ID,
+            &p.UserID,
+            &p.Title,
+            &p.CreatedTime,
+            &p.IsPublished,
+        ); err != nil {
+            log.Printf("Scan error: %v", err)
             return nil, err
         }
         problems = append(problems, p)
     }
 
-    if err := rows.Err(); err != nil {
+    if err = rows.Err(); err != nil {
+        log.Printf("Rows error: %v", err)
         return nil, err
     }
 
+    log.Printf("Problems fetched: %+v", problems)
     return problems, nil
 }
 
@@ -173,6 +189,7 @@ func GetTotalProblemsCount() (int, error) {
     var count int
     err := db.QueryRow("SELECT COUNT(*) FROM problems").Scan(&count)
     if err != nil {
+        log.Printf("Error counting problems: %v", err)
         return 0, err
     }
     return count, nil

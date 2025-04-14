@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
-	"math"
 
 	"github.com/placeHolder143032/CodeChallengeHub/database"
 	"github.com/placeHolder143032/CodeChallengeHub/middleware"
@@ -227,56 +227,37 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 	// http.Redirect(w, r, "/problems", http.StatusSeeOther)
 }
 
-
 // @desc get HTML page for all problems with pagination
 // @route GET /problems?page=<number>
 // @access private (you can only access this page if you are logged in)
 func GoProblemsListPageUser(w http.ResponseWriter, r *http.Request) {
-	// Get page number from query parameters, default to 1 if not provided
-	page := r.URL.Query().Get("page")
-	pageNum := 1
-	if page != "" {
-		var err error
-		pageNum, err = strconv.Atoi(page)
-		if err != nil || pageNum < 1 {
-			pageNum = 1
+	// Get page number from query parameters
+	pageStr := r.URL.Query().Get("page")
+	page := 1
+	if pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
 		}
 	}
 
-	const itemsPerPage = 10
-
-	// Get problems with proper pagination
-	problems, err := database.GetProblemsPageUser(pageNum, itemsPerPage)
+	itemsPerPage := 10
+	problems, err := database.GetProblemsPageUser(page, itemsPerPage)
 	if err != nil {
 		log.Printf("Error fetching problems: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	fmt.Print(problems)
-	fmt.Println(", Problems fetched successfully")
 
-
-	// Get total number of problems for pagination
-	totalProblems, err := database.GetTotalProblemsCount()
+	// Get total count for pagination
+	totalCount, err := database.GetTotalProblemsCount()
 	if err != nil {
-		log.Printf("Error getting total problems count: %v", err)
+		log.Printf("Error getting total count: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	// Calculate pagination details
-	totalPages := int(math.Ceil(float64(totalProblems) / float64(itemsPerPage)))
-	if pageNum > totalPages {
-		pageNum = totalPages
-	}
+	totalPages := (totalCount + itemsPerPage - 1) / itemsPerPage
 
-	// Generate page numbers for navigation
-	var pageNumbers []int
-	for i := 1; i <= totalPages; i++ {
-		pageNumbers = append(pageNumbers, i)
-	}
-
-	// Setup template data
 	data := struct {
 		Problems    []models.Problem
 		CurrentPage int
@@ -286,27 +267,23 @@ func GoProblemsListPageUser(w http.ResponseWriter, r *http.Request) {
 		PageNumbers []int
 	}{
 		Problems:    problems,
-		CurrentPage: pageNum,
-		PrevPage:    pageNum - 1,
-		NextPage:    pageNum + 1,
+		CurrentPage: page,
+		PrevPage:    page - 1,
+		NextPage:    page + 1,
 		TotalPages:  totalPages,
-		PageNumbers: pageNumbers,
+		PageNumbers: generatePageNumbers(page, totalPages),
 	}
 
-	// Parse and execute template
-	tmpl, err := template.ParseFiles("ui/html/problemsList.html")
-	if err != nil {
-		log.Printf("Template parse error: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	log.Printf("Template data: %+v", data)
+	renderTemplate(w, "problemsList.html", data)
+}
 
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		log.Printf("Template execute error: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+func generatePageNumbers(currentPage, totalPages int) []int {
+	var pages []int
+	for i := 1; i <= totalPages; i++ {
+		pages = append(pages, i)
 	}
+	return pages
 }
 
 // @desc get HTML page for user's submissions with pagination
