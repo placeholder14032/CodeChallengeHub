@@ -27,7 +27,6 @@
         font-size: 1.8rem;
         font-weight: 600;
         color: #2b4c7e;
-        padding-left: 2%;
       }
 
       header nav a {
@@ -71,8 +70,8 @@
       .problems-table th,
       .problems-table td {
         padding: 1rem;
-        text-align: center;
-        font-size: 1.1rem;
+        text-align: left;
+        font-size: 1rem;
         color: #567ebb;
       }
 
@@ -98,22 +97,6 @@
 
       .problems-table a:hover {
         color: #567ebb;
-      }
-
-      /* Difficulty Styling */
-      .difficulty-easy {
-        color: #28a745;
-        font-weight: 600;
-      }
-
-      .difficulty-medium {
-        color: #ffc107;
-        font-weight: 600;
-      }
-
-      .difficulty-hard {
-        color: #dc3545;
-        font-weight: 600;
       }
 
       /* Solve Button */
@@ -157,7 +140,7 @@
         color: #2b4c7e;
       }
 
-      .pagination .current-page {
+      .pagination .current {
         background-color: #ffeb99;
         color: #2b4c7e;
         font-weight: 600;
@@ -174,8 +157,6 @@
         padding: 1rem;
         background-color: #e6f0fa;
         color: #567ebb;
-        position: fixed;
-        bottom: 0;
         width: 100%;
       }
 
@@ -207,6 +188,11 @@
           display: block;
           overflow-x: auto;
         }
+
+        .problems-table th,
+        .problems-table td {
+          min-width: 100px;
+        }
       }
     </style>
   </head>
@@ -225,25 +211,21 @@
       <table class="problems-table">
         <thead>
           <tr>
-            <th>Status</th>
             <th>Title</th>
-            <th>Difficulty</th>
-            <th>Submissions</th>
+            <th>Time Limit</th>
+            <th>Memory Limit</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {{range .Problems}}
           <tr>
-            <td>{{if .Solved}} ✅ {{else}} ⭕ {{end}}</td>
             <td><a href="/problem?id={{.ID}}">{{.Title}}</a></td>
-            <td class="difficulty-{{.Difficulty}}">{{.Difficulty}}</td>
-            <td>{{.Submissions}}</td>
-            <td>
-              <a href="/submit_answer?problem={{.ID}}" class="solve-button"
-                >Solve</a
-              >
-            </td>
+            <td>{{.TimeLimit}}ms</td>
+            <td>{{.MemoryLimit}}MB</td>
+            <td>{{if .IsPublished}}Published{{else}}Draft{{end}}</td>
+            <td><a href="/problem?id={{.ID}}" class="solve-button">Solve</a></td>
           </tr>
           {{end}}
         </tbody>
@@ -252,15 +234,23 @@
       <!-- Pagination Controls -->
       <div class="pagination">
         {{if gt .CurrentPage 1}}
-        <a href="?page={{.PrevPage}}">&laquo; Previous</a>
-        {{end}} {{range .PageNumbers}} {{if eq . $.CurrentPage}}
+        <a href="?page={{.PrevPage}}">« Previous</a>
+        {{end}} 
+        {{range .PageNumbers}} 
+        {{if eq . $.CurrentPage}}
         <span class="current">{{.}}</span>
         {{else}}
         <a href="?page={{.}}">{{.}}</a>
-        {{end}} {{end}} {{if lt .CurrentPage .TotalPages}}
-        <a href="?page={{.NextPage}}">Next &raquo;</a>
+        {{end}} 
+        {{end}} 
+        {{if lt .CurrentPage .TotalPages}}
+        <a href="?page={{.NextPage}}">Next »</a>
         {{end}}
       </div>
     </main>
+
+    <footer>
+      <p>&copy; 2025 CodeChallengeHub. All rights reserved.</p>
+    </footer>
   </body>
 </html>

@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 	"errors"
-	
-    "github.com/placeHolder143032/CodeChallengeHub/models"
+
+	"github.com/placeHolder143032/CodeChallengeHub/models"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -43,35 +43,34 @@ func GetProblemsPageAdmin(m, n int) ([]models.Problem, error) {
 
 // this one is for users since it does check if its published or not
 func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
-	var problems []models.Problem
-	query := `
-		SELECT id, title
-		FROM problems
-		WHERE is_published = true
-		ORDER BY created_at DESC
-		LIMIT ? OFFSET ?;
-	`
-	offset := (m - 1) * n
+    var problems []models.Problem
+    query := `
+        SELECT id, title, time_limit_ms, memory_limit_mb, created_at, is_published
+        FROM problems
+        ORDER BY created_at DESC
+        LIMIT ? OFFSET ?;
+    `
+    offset := (m - 1) * n
 
-	rows, err := db.Query(query, n, offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+    rows, err := db.Query(query, n, offset)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
 
-	for rows.Next() {
-		var p models.Problem
-		if err := rows.Scan(&p.ID, &p.Title); err != nil {
-			return nil, err
-		}
-		problems = append(problems, p)
-	}
+    for rows.Next() {
+        var p models.Problem
+        if err := rows.Scan(&p.ID, &p.Title, &p.TimeLimit, &p.MemoryLimit, &p.CreatedTime, &p.IsPublished); err != nil {
+            return nil, err
+        }
+        problems = append(problems, p)
+    }
 
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
 
-	return problems, nil
+    return problems, nil
 }
 
 // created at should be from the other side for less inconsistency
@@ -172,7 +171,7 @@ func EditProblem(db *sql.DB, user_id, problem_id int, title string, time_limit_m
 
 func GetTotalProblemsCount() (int, error) {
     var count int
-    err := db.QueryRow("SELECT COUNT(*) FROM problems WHERE is_published = true").Scan(&count)
+    err := db.QueryRow("SELECT COUNT(*) FROM problems").Scan(&count)
     if err != nil {
         return 0, err
     }
