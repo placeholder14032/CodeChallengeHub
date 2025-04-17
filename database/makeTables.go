@@ -79,24 +79,24 @@ func connect() (*sql.DB, error) {
 	}
 
 	dsn = fmt.Sprintf(`%s:%s@tcp(%s)/?parseTime=true`, user, password, hostname)
-	db, err := sql.Open("mysql", dsn)
+	userDB, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal("Failed to connect as new user:", err)
 	}
-	defer db.Close()
+	defer userDB.Close()
 
 	dsn = fmt.Sprintf(`CREATE DATABASE IF NOT EXISTS %s;`, dbname)
-	_, err = db.Exec(dsn)
+	_, err = userDB.Exec(dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	dsn = fmt.Sprintf(`%s:%s@tcp(%s)/%s?parseTime=true`, user, password, hostname, dbname)
-	finalDB, err := sql.Open("mysql", dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer finalDB.Close()
+	defer db.Close()
 
 	makeUsers := `
     create table if not exists users (
@@ -157,15 +157,15 @@ func connect() (*sql.DB, error) {
 		2 -> admin
 
 	*/
-	_, err = finalDB.Exec(makeUsers)
+	_, err = db.Exec(makeUsers)
 	if err != nil {
 		return nil, err
 	}
-	_, err = finalDB.Exec(makeProblems)
+	_, err = db.Exec(makeProblems)
 	if err != nil {
 		return nil, err
 	}
-	_, err = finalDB.Exec(makeSubmissions)
+	_, err = db.Exec(makeSubmissions)
 	if err != nil {
 		return nil, err
 	}
