@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -46,18 +47,56 @@ type Submission struct {
 
 func connect() (*sql.DB, error) {
 	var err error
+	var user, password, hostname, dbname, dsn string
+	hostname = `127.0.0.1:3306`
+	dbname = `CodeChallengeHub`
 
-	username := "Mahdi"           // your MySQL username
-	password := "Mahdi0441265367" // your MySQL password
-	hostname := "127.0.0.1:3306"
-	dbname := "codehub" // your MySQL database name
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", username, password, hostname, dbname)
-
-	db, err = sql.Open("mysql", dsn)
+	user = `root`
+	dsn = fmt.Sprintf(`%s:@tcp(%s)/`, user, hostname)
+	rootDB, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
+	defer rootDB.Close()
+
+	user = `alireza-tofighi`
+	password = `AlirezaTofighi1234`
+	dsn = fmt.Sprintf(`CREATE USER IF NOT EXISTS '%s'@'localhost' IDENTIFIED BY '%s';`, user, password)
+	_, err = rootDB.Exec(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dsn = fmt.Sprintf(`GRANT ALL PRIVILEGES ON *.* TO '%s'@'localhost' WITH GRANT OPTION;`, user)
+	_, err = rootDB.Exec(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = rootDB.Exec("FLUSH PRIVILEGES;")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dsn = fmt.Sprintf(`%s:%s@tcp(%s)/?parseTime=true`, user, password, hostname)
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal("Failed to connect as new user:", err)
+	}
+	defer db.Close()
+
+	dsn = fmt.Sprintf(`CREATE DATABASE IF NOT EXISTS %s;`, dbname)
+	_, err = db.Exec(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dsn = fmt.Sprintf(`%s:%s@tcp(%s)/%s?parseTime=true`, user, password, hostname, dbname)
+	finalDB, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer finalDB.Close()
 
 	makeUsers := `
     create table if not exists users (
@@ -118,15 +157,15 @@ func connect() (*sql.DB, error) {
 		2 -> admin
 
 	*/
-	_, err = db.Exec(makeUsers)
+	_, err = finalDB.Exec(makeUsers)
 	if err != nil {
 		return nil, err
 	}
-	_, err = db.Exec(makeProblems)
+	_, err = finalDB.Exec(makeProblems)
 	if err != nil {
 		return nil, err
 	}
-	_, err = db.Exec(makeSubmissions)
+	_, err = finalDB.Exec(makeSubmissions)
 	if err != nil {
 		return nil, err
 	}
