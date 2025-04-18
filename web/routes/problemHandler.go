@@ -133,10 +133,8 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 
 	// Create directory for problem files
 	basePath := "problems"
-	year := time.Now().Year()
-	userDir := fmt.Sprintf("user_%d", userID)
-	timestamp := time.Now().Unix()
-	problemDir := filepath.Join(basePath, fmt.Sprintf("%d", year), userDir, fmt.Sprintf("problem_%d_%d", userID, timestamp))
+	userDir := fmt.Sprintf("%v", userID)
+	problemDir := filepath.Join(basePath, userDir, fmt.Sprintf("%s", form.Title))
 
 	log.Printf("AddProblem: Creating directory: %s", problemDir)
 	if err := os.MkdirAll(problemDir, 0755); err != nil {
