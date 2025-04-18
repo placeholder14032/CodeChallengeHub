@@ -66,9 +66,3 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "problem.html", problem)
 }
 
-// @desc get Html page for submitting problem
-// @route GET / submit_answer
-// @access private (you can only access this page if you are logged in)
-func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "problem_submit.html", nil)
-}

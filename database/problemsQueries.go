@@ -85,7 +85,7 @@ func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
         return nil, err
     }
 
-    log.Printf("Problems fetched: %+v", problems)
+    // log.Printf("Problems fetched: %+v", problems)
     return problems, nil
 }
 

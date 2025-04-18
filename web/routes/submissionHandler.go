@@ -31,6 +31,7 @@ type Submission struct {
 // @route POST /api/submit_answer
 // @access private you can only access it if you are logged in
 func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
+    fmt.Print("wsdfgcjhcv kghc utdltuodsutkgfhgftckjtuxy")
     // Get user ID from context (set by RequireAuth middleware)
     userID, ok := r.Context().Value(middleware.UserIDKey).(int)
     if !ok {
@@ -126,4 +127,12 @@ func saveCodeToFile(code string, userID, problemID int) (string, error) {
     }
     
     return absPath, nil
+}
+
+
+// @desc get Html page for submitting problem
+// @route GET / submit_answer
+// @access private (you can only access this page if you are logged in)
+func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "problem_submit.html", nil)
 }
