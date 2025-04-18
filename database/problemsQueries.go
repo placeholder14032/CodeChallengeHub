@@ -134,22 +134,33 @@ func PublishProblem(id int) error {
 }
 
 func GetSingleProblem(id int) (models.Problem, error) {
-	var problem models.Problem
-	query := `
-	SELECT title, description_path, input_path, output_path, time_limit_ms, memory_limit_mb FROM users 
-	WHERE id = ? LIMIT 1
-	`
+    var problem models.Problem
+    query := `
+        SELECT id, user_id, title, description_path, input_path, output_path, created_at, is_published, time_limit_ms, memory_limit_mb
+        FROM problems
+        WHERE id = ? LIMIT 1
+    `
 
-	err := db.QueryRow(query, id).Scan(&problem.Title, problem.DescriptionPath, problem.InputPath, problem.OutputPath, problem.CreatedTime, problem.TimeLimit, problem.MemoryLimit)
-	if err != nil && err != sql.ErrNoRows {
-		return models.Problem{}, err
-	}
+    err := db.QueryRow(query, id).Scan(
+        &problem.ID,
+        &problem.UserID,
+        &problem.Title,
+        &problem.DescriptionPath,
+        &problem.InputPath,
+        &problem.OutputPath,
+        &problem.CreatedTime,
+        &problem.IsPublished,
+        &problem.TimeLimit,
+        &problem.MemoryLimit,
+    )
+    if err != nil {
+        if err == sql.ErrNoRows {
+            return models.Problem{}, errors.New("problem does not exist")
+        }
+        return models.Problem{}, err
+    }
 
-	if err == sql.ErrNoRows {
-		return models.Problem{}, errors.New("user does not exist")
-	}
-
-	return problem, nil
+    return problem, nil
 }
 
 func EditProblem(db *sql.DB, user_id, problem_id int, title string, time_limit_ms, memory_limit_mb int) error {

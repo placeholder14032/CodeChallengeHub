@@ -436,3 +436,31 @@ func GoSubmissionView(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, "/submission.html", data)
 }
+
+
+// @desc get Html page for each problem page
+// @route GET /problem 
+// @access private (you can only access this page if you are logged in)
+func GoProblemPage(w http.ResponseWriter, r *http.Request) {
+	problem := struct {
+		ID          string
+		Title       string
+		Statement   string
+		Explanation string
+		TimeLimit   int
+		MemoryLimit int
+		Input       string
+		Output      string
+	}{
+		ID:          "1",
+		Title:       "Add Two Numbers",
+		Statement:   "Write a program to add two numbers and return their sum.",
+		Explanation: "You are given two integers as input. Your task is to compute their sum and output the result.",
+		TimeLimit:   1000,
+		MemoryLimit: 256,
+		Input:       "2 3",
+		Output:      "5",
+	}
+
+	renderTemplate(w, "problem.html", problem)
+}
