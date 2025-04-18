@@ -3,6 +3,8 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	// "os"
+	// "path/filepath"
 
 	"github.com/placeHolder143032/CodeChallengeHub/database"
 	"github.com/placeHolder143032/CodeChallengeHub/models"
@@ -14,7 +16,6 @@ import (
 // @route POST /api/auth/register-user
 // @access public
 func  SignupUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("Signup user:")
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
@@ -42,6 +43,14 @@ func  SignupUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		database.SignUpUser(createdUser)
+
+		// // Create user folder
+		// userFolder := filepath.Join("sources", username)
+		// err = os.MkdirAll(userFolder, 0755)
+		// if err != nil {
+		// 	http.Error(w, "Error creating user folder", http.StatusInternalServerError)
+		// 	return
+		// }
 		
 	// Redirect to profile page with status code 303 (See Other)
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)

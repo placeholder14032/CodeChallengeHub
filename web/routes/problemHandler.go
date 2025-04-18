@@ -30,46 +30,46 @@ type FormData struct {
 // @route GET,POST /add_problem
 // @access private
 func AddProblem(w http.ResponseWriter, r *http.Request) {
-	log.Printf("AddProblem: Request received, Method: %s, URL: %s", r.Method, r.URL.Path)
+	// log.Printf("AddProblem: Request received, Method: %s, URL: %s", r.Method, r.URL.Path)
 
 	// Parse the HTML template
 	tmpl, err := template.ParseFiles("ui/html/add_problem.html")
 	if err != nil {
-		log.Printf("AddProblem: Template parse error: %v", err)
+		// log.Printf("AddProblem: Template parse error: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	log.Printf("AddProblem: Template parsed successfully")
+	// log.Printf("AddProblem: Template parsed successfully")
 
 	// Handle GET request (render empty form)
 	if r.Method == http.MethodGet {
-		log.Printf("AddProblem: Handling GET request")
+		// log.Printf("AddProblem: Handling GET request")
 		err := tmpl.Execute(w, nil)
 		if err != nil {
-			log.Printf("AddProblem: Template execute error: %v", err)
+			// log.Printf("AddProblem: Template execute error: %v", err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		} else {
-			log.Printf("AddProblem: GET request served, form rendered")
+			// log.Printf("AddProblem: GET request served, form rendered")
 		}
 		return
 	}
 
 	// Handle POST request
 	if r.Method != http.MethodPost {
-		log.Printf("AddProblem: Invalid method %s, expected POST", r.Method)
+		// log.Printf("AddProblem: Invalid method %s, expected POST", r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	log.Printf("AddProblem: Handling POST request")
+	// log.Printf("AddProblem: Handling POST request")
 
 	// Parse form data
 	err = r.ParseForm()
 	if err != nil {
-		log.Printf("AddProblem: Form parse error: %v", err)
+		// log.Printf("AddProblem: Form parse error: %v", err)
 		tmpl.Execute(w, struct{ Error string }{Error: "Unable to parse form"})
 		return
 	}
-	log.Printf("AddProblem: Form parsed successfully")
+	// log.Printf("AddProblem: Form parsed successfully")
 
 	// Extract form values
 	form := FormData{
@@ -80,65 +80,65 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 		Input:       r.FormValue("input"),
 		Output:      r.FormValue("output"),
 	}
-	log.Printf("AddProblem: Form data extracted: Title=%s, TimeLimit=%s, MemoryLimit=%s",
-		form.Title, form.TimeLimit, form.MemoryLimit)
+	// log.Printf("AddProblem: Form data extracted: Title=%s, TimeLimit=%s, MemoryLimit=%s",
+		// form.Title, form.TimeLimit, form.MemoryLimit)
 
 	// Validate required fields
 	if form.Title == "" || form.Statement == "" ||
 		form.TimeLimit == "" || form.MemoryLimit == "" || form.Input == "" || form.Output == "" {
-		log.Printf("AddProblem: Validation failed: Missing required fields")
+		// log.Printf("AddProblem: Validation failed: Missing required fields")
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
 			Error: "All fields are required",
 			Form:  form,
 		})
 		return
 	}
-	log.Printf("AddProblem: Required fields validated")
+	// log.Printf("AddProblem: Required fields validated")
 
 	// Validate time limit
 	timeLimit, err := strconv.Atoi(form.TimeLimit)
 	if err != nil || timeLimit <= 0 {
-		log.Printf("AddProblem: Validation failed: Invalid time limit: %s, error: %v", form.TimeLimit, err)
+		// log.Printf("AddProblem: Validation failed: Invalid time limit: %s, error: %v", form.TimeLimit, err)
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
 			Error: "Time limit must be a positive number",
 			Form:  form,
 		})
 		return
 	}
-	log.Printf("AddProblem: Time limit validated: %d ms", timeLimit)
+	// log.Printf("AddProblem: Time limit validated: %d ms", timeLimit)
 
 	// Validate memory limit
 	memoryLimit, err := strconv.Atoi(form.MemoryLimit)
 	if err != nil || memoryLimit <= 0 {
-		log.Printf("AddProblem: Validation failed: Invalid memory limit: %s, error: %v", form.MemoryLimit, err)
+		// log.Printf("AddProblem: Validation failed: Invalid memory limit: %s, error: %v", form.MemoryLimit, err)
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
 			Error: "Memory limit must be a positive number",
 			Form:  form,
 		})
 		return
 	}
-	log.Printf("AddProblem: Memory limit validated: %d MB", memoryLimit)
+	// log.Printf("AddProblem: Memory limit validated: %d MB", memoryLimit)
 
 	// Get user ID from context
 	userID, ok := r.Context().Value(middleware.UserIDKey).(int)
 	if !ok {
-		log.Printf("AddProblem: User ID not found in context")
+		// log.Printf("AddProblem: User ID not found in context")
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
 			Error: "Authentication error",
 			Form:  form,
 		})
 		return
 	}
-	log.Printf("AddProblem: User ID retrieved: %d", userID)
+	// log.Printf("AddProblem: User ID retrieved: %d", userID)
 
 	// Create directory for problem files
-	basePath := "problems"
+	basePath := "pkg"
 	userDir := fmt.Sprintf("%v", userID)
-	problemDir := filepath.Join(basePath, userDir, fmt.Sprintf("%s", form.Title))
+	problemDir := filepath.Join(basePath, userDir,"problemsCreated", fmt.Sprintf(form.Title))
 
-	log.Printf("AddProblem: Creating directory: %s", problemDir)
+	// log.Printf("AddProblem: Creating directory: %s", problemDir)
 	if err := os.MkdirAll(problemDir, 0755); err != nil {
-		log.Printf("AddProblem: Failed to create directory %s: %v", problemDir, err)
+		// log.Printf("AddProblem: Failed to create directory %s: %v", problemDir, err)
 		tmpl.Execute(w, struct{ Error string; Form FormData }{
 			Error: "Failed to save problem files",
 			Form:  form,
@@ -221,8 +221,8 @@ func AddProblem(w http.ResponseWriter, r *http.Request) {
 	log.Printf("AddProblem: Problem '%s' created successfully by user %d", form.Title, userID)
 
 	// Redirect to problems list
-	log.Printf("AddProblem: Redirecting to /problems")
-	// http.Redirect(w, r, "/problems", http.StatusSeeOther)
+	log.Printf("AddProblem: Redirecting to /allproblems-user")
+	http.Redirect(w, r, "/allproblems-user", http.StatusSeeOther)
 }
 
 // @desc get HTML page for all problems with pagination
