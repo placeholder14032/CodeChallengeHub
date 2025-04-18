@@ -409,18 +409,17 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Check if problem is published for non-admin users
-    isAdmin, err := database.GetUserRole(userID)
+    // isAdmin, err := database.GetUserRole(userID)
     if err != nil {
         log.Printf("Error fetching user role for user %d: %v", userID, err)
         http.Error(w, "Internal server error", http.StatusInternalServerError)
         return
     }
 
-    if !problem.IsPublished && isAdmin == 0 {
-        http.Error(w, "Problem not available", http.StatusForbidden)
-        return
-    }
+    // if !problem.IsPublished && isAdmin == 0 {
+    //     http.Error(w, "Problem not available", http.StatusForbidden)
+    //     return
+    // }
 
     // Read description, input, and output files
     description, err := os.ReadFile(problem.DescriptionPath)
