@@ -10,6 +10,7 @@ import (
 
 	// "time"
 	_ "github.com/go-sql-driver/mysql"
+    "log"
 )
 
 func GenerateSessionID() (string, error) {
@@ -65,13 +66,26 @@ func ValidateSession(sessionID string) (int, bool, error) {
     `, sessionID).Scan(&id)
 
     if err == sql.ErrNoRows {
-        return 0, false, nil // Session doesn't exist or is expired
+        log.Printf("Session %s not found or expired", sessionID)
+        return 0, false, nil
     }
     if err != nil {
-        return 0, false, err // Other database errors
+        log.Printf("Database error validating session %s: %v", sessionID, err)
+        return 0, false, err
     }
 
-    return id, true, nil // Session is valid
+    // Refresh session expiration
+    _, err = db.Exec(`
+        UPDATE sessions 
+        SET expires_at = DATE_ADD(NOW(), INTERVAL 24 HOUR)
+        WHERE session_id = ?
+    `, sessionID)
+    if err != nil {
+        log.Printf("Error refreshing session %s: %v", sessionID, err)
+    }
+
+    log.Printf("Session %s validated, user_id=%d", sessionID, id)
+    return id, true, nil
 }
 
 

@@ -363,104 +363,105 @@ func GoSubmissionsPage(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "my_submission.html", data)
 }
 
-// @desc get HTML page for a specific submission
-// @route GET /submission?id=<submission_id>
-// @access private (only accessible to the submission owner or admin)
-func GoSubmissionView(w http.ResponseWriter, r *http.Request) {
-	// Assume user is authenticated
-	currentUserID := "user123" // TODO: Replace with actual user ID from session/token
-
-	// Get submission ID from query parameter
-	submissionID := r.URL.Query().Get("id")
-	if submissionID == "" {
-		http.Error(w, "Submission ID is required", http.StatusBadRequest)
-		return
-	}
-
-	// TODO: Fetch submission from database
-	// For now, using static data
-	submissions := []Submission{
-		{
-			ID:            "s1",
-			ProblemID:     "1",
-			ProblemTitle:  "Two Sum",
-			UserID:        "user123",
-			OwnerUsername: "john_doe",
-			Code:          "func twoSum(nums []int, target int) []int {\n    for i := 0; i < len(nums); i++ {\n        for j := i + 1; j < len(nums); j++ {\n            if nums[i] + nums[j] == target {\n                return []int{i, j}\n            }\n        }\n    }\n    return nil\n}",
-			Status:        "OK",
-			TimeUsed:      50, // Example time in ms
-			SubmittedAt:   time.Now().Add(-24 * time.Hour),
-		},
-		{
-			ID:            "s2",
-			ProblemID:     "2",
-			ProblemTitle:  "Add Two Numbers",
-			UserID:        "user456",
-			OwnerUsername: "jane_smith",
-			Code:          "func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {\n    // ...",
-			Status:        "Wrong Answer",
-			TimeUsed:      120,
-			SubmittedAt:   time.Now().Add(-20 * time.Hour),
-		},
-	}
-
-	// Find the submission
-	var submission Submission
-	found := false
-	for _, s := range submissions {
-		if s.ID == submissionID {
-			submission = s
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		http.Error(w, "Submission not found", http.StatusNotFound)
-		return
-	}
-
-	// Access control: only the owner or an admin can view
-	isAdmin := false // TODO: Implement admin check (e.g., from user role in DB)
-	if submission.UserID != currentUserID && !isAdmin {
-		http.Error(w, "Forbidden: You can only view your own submissions", http.StatusForbidden)
-		return
-	}
-
-	// Prepare data for template
-	data := struct {
-		Submission Submission
-	}{
-		Submission: submission,
-	}
-
-	renderTemplate(w, "/submission.html", data)
-}
-
-
-// @desc get Html page for each problem page
-// @route GET /problem 
+// @desc get HTML page for each problem page
+// @route GET /problem
 // @access private (you can only access this page if you are logged in)
 func GoProblemPage(w http.ResponseWriter, r *http.Request) {
-	problem := struct {
-		ID          string
-		Title       string
-		Statement   string
-		Explanation string
-		TimeLimit   int
-		MemoryLimit int
-		Input       string
-		Output      string
-	}{
-		ID:          "1",
-		Title:       "Add Two Numbers",
-		Statement:   "Write a program to add two numbers and return their sum.",
-		Explanation: "You are given two integers as input. Your task is to compute their sum and output the result.",
-		TimeLimit:   1000,
-		MemoryLimit: 256,
-		Input:       "2 3",
-		Output:      "5",
-	}
+    // Get problem ID from URL parameter
+    problemID := r.URL.Query().Get("id")
+    if problemID == "" {
+        http.Error(w, "Problem ID is required", http.StatusBadRequest)
+        return
+    }
 
-	renderTemplate(w, "problem.html", problem)
+    // Convert problemID to int
+    id, err := strconv.Atoi(problemID)
+    if err != nil {
+        http.Error(w, "Invalid problem ID", http.StatusBadRequest)
+        return
+    }
+
+    // Get userID from context with detailed logging
+    userIDValue := r.Context().Value(middleware.UserIDKey)
+    if userIDValue == nil {
+        log.Printf("Unauthorized: No UserIDKey in context for request %s", r.URL.String())
+        http.Redirect(w, r, "/login-user", http.StatusSeeOther)
+        return
+    }
+
+    userID, ok := userIDValue.(int)
+    if !ok {
+        log.Printf("Unauthorized: UserIDKey value is not an int, got type %T, value %v, for request %s", 
+            userIDValue, userIDValue, r.URL.String())
+        http.Redirect(w, r, "/login-user", http.StatusSeeOther)
+        return
+    }
+
+    // Get problem from database
+    problem, err := database.GetSingleProblem(id)
+    if err != nil {
+        if err.Error() == "problem does not exist" {
+            http.Error(w, "Problem not found", http.StatusNotFound)
+            return
+        }
+        log.Printf("Error fetching problem %d: %v", id, err)
+        http.Error(w, "Internal server error", http.StatusInternalServerError)
+        return
+    }
+
+    // Check if problem is published for non-admin users
+    isAdmin, err := database.GetUserRole(userID)
+    if err != nil {
+        log.Printf("Error fetching user role for user %d: %v", userID, err)
+        http.Error(w, "Internal server error", http.StatusInternalServerError)
+        return
+    }
+
+    if !problem.IsPublished && isAdmin == 0 {
+        http.Error(w, "Problem not available", http.StatusForbidden)
+        return
+    }
+
+    // Read description, input, and output files
+    description, err := os.ReadFile(problem.DescriptionPath)
+    if err != nil {
+        log.Printf("Error reading description file %s: %v", problem.DescriptionPath, err)
+        http.Error(w, "Error reading problem description", http.StatusInternalServerError)
+        return
+    }
+
+    input, err := os.ReadFile(problem.InputPath)
+    if err != nil {
+        log.Printf("Error reading input file %s: %v", problem.InputPath, err)
+        http.Error(w, "Error reading input description", http.StatusInternalServerError)
+        return
+    }
+
+    output, err := os.ReadFile(problem.OutputPath)
+    if err != nil {
+        log.Printf("Error reading output file %s: %v", problem.OutputPath, err)
+        http.Error(w, "Error reading output description", http.StatusInternalServerError)
+        return
+    }
+
+    // Prepare template data
+    data := struct {
+        Problem     models.Problem
+        Description string
+        Input       string
+        Output      string
+        UserID      int
+    }{
+        Problem:     problem,
+        Description: string(description),
+        Input:       string(input),
+        Output:      string(output),
+        UserID:      userID,
+    }
+
+    // Set content type
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+    // Render template
+    renderTemplate(w, "problem.html", data)
 }
