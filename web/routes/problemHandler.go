@@ -444,23 +444,16 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
     }
 
     // Prepare template data
-    data := struct {
-        Problem     models.Problem
-        Description string
-        Input       string
-        Output      string
-        UserID      int
-    }{
-        Problem:     problem,
-        Description: string(description),
+    data := models.ProblemData{
+        Title:     problem.Title,
+        Explanation: string(description),
         Input:       string(input),
         Output:      string(output),
-        UserID:      userID,
+		TimeLimit:   problem.TimeLimit,
+		MemoryLimit: problem.MemoryLimit,
     }
 
-    // Set content type
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-    // Render template
     renderTemplate(w, "problem.html", data)
 }
