@@ -96,7 +96,6 @@ func connect() (*sql.DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	makeUsers := `
     create table if not exists users (
