@@ -17,6 +17,19 @@ func SubmitCode(submission Submission) error {
 	if err != nil {
 		return err
 	}
+
+	cache, err := readCache(cacheFileName)
+	if err != nil {
+		return err
+	}
+
+	cache.SubmissionCount += 1
+
+	err = writeCache(cacheFileName, cache)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
