@@ -12,6 +12,7 @@ import (
 
 	"fmt"
 	"os"
+	"strconv"
 )
 
 // @desc submit your answer to a problem
@@ -129,72 +130,61 @@ func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
 // @route GET /submission?id=<submission_id>
 // @access private (only accessible to the submission owner or admin)
 func GoSubmissionView(w http.ResponseWriter, r *http.Request) {
-	// Assume user is authenticated
-	currentUserID := "user123" // TODO: Replace with actual user ID from session/token
+    // Get current user ID from context
+    userIDValue := r.Context().Value(middleware.UserIDKey)
+    if userIDValue == nil {
+        http.Redirect(w, r, "/login-user", http.StatusSeeOther)
+        return
+    }
 
-	// Get submission ID from query parameter
-	submissionID := r.URL.Query().Get("id")
-	if submissionID == "" {
-		http.Error(w, "Submission ID is required", http.StatusBadRequest)
-		return
-	}
+    currentUserID, ok := userIDValue.(int)
+    if !ok {
+        http.Error(w, "Invalid user ID in context", http.StatusInternalServerError)
+        return
+    }
 
-	// TODO: Fetch submission from database
-	// For now, using static data
-	submissions := []Submission{
-		{
-			ID:            "s1",
-			ProblemID:     "1",
-			ProblemTitle:  "Two Sum",
-			UserID:        "user123",
-			OwnerUsername: "john_doe",
-			Code:          "func twoSum(nums []int, target int) []int {\n    for i := 0; i < len(nums); i++ {\n        for j := i + 1; j < len(nums); j++ {\n            if nums[i] + nums[j] == target {\n                return []int{i, j}\n            }\n        }\n    }\n    return nil\n}",
-			Status:        "OK",
-			TimeUsed:      50, // Example time in ms
-			SubmittedAt:   time.Now().Add(-24 * time.Hour),
-		},
-		{
-			ID:            "s2",
-			ProblemID:     "2",
-			ProblemTitle:  "Add Two Numbers",
-			UserID:        "user456",
-			OwnerUsername: "jane_smith",
-			Code:          "func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {\n    // ...",
-			Status:        "Wrong Answer",
-			TimeUsed:      120,
-			SubmittedAt:   time.Now().Add(-20 * time.Hour),
-		},
-	}
+    // Get page number from query parameter, default to 1
+    pageStr := r.URL.Query().Get("page")
+    page := 1
+    if pageStr != "" {
+        if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+            page = p
+        }
+    }
 
-	// Find the submission
-	var submission Submission
-	found := false
-	for _, s := range submissions {
-		if s.ID == submissionID {
-			submission = s
-			found = true
-			break
-		}
-	}
+    // Define items per page
+    const itemsPerPage = 10
 
-	if !found {
-		http.Error(w, "Submission not found", http.StatusNotFound)
-		return
-	}
+    // Fetch submissions for the user
+    submissions, err := database.GetAllSubmissionsByUser(currentUserID, page, itemsPerPage)
+    if err != nil {
+        http.Error(w, "Failed to fetch submissions", http.StatusInternalServerError)
+        return
+    }
 
-	// Access control: only the owner or an admin can view
-	isAdmin := false // TODO: Implement admin check (e.g., from user role in DB)
-	if submission.UserID != currentUserID && !isAdmin {
-		http.Error(w, "Forbidden: You can only view your own submissions", http.StatusForbidden)
-		return
-	}
+    // Get total count for pagination
+    totalCount, err := database.GetTotalSubmissionsCount(currentUserID)
+    if err != nil {
+        http.Error(w, "Failed to get total count", http.StatusInternalServerError)
+        return
+    }
 
-	// Prepare data for template
-	data := struct {
-		Submission Submission
-	}{
-		Submission: submission,
-	}
+    // Calculate total pages
+    totalPages := (totalCount + itemsPerPage - 1) / itemsPerPage
 
-	renderTemplate(w, "/submission.html", data)
+    // Prepare template data
+    data := struct {
+        Submissions  []models.Submission
+        CurrentPage  int
+        TotalPages   int
+        ItemsPerPage int
+    }{
+        Submissions:  submissions,
+        CurrentPage:  page,
+        TotalPages:   totalPages,
+        ItemsPerPage: itemsPerPage,
+    }
+
+    // Render template
+    renderTemplate(w, "/submissions.html", data)
 }
