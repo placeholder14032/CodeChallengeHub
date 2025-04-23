@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"database/sql"
@@ -169,11 +169,4 @@ func connect() (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
-}
-
-func main() {
-	_, err := connect()
-	if err != nil {
-		panic(err)
-	}
 }
