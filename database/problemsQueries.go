@@ -85,6 +85,18 @@ func AddProblem(user_id int, problem Problem) error {
 		return err
 	}
 
+	cache, err := readCache(cacheFileName)
+	if err != nil {
+		return err
+	}
+
+	cache.ProblemCount += 1
+
+	err = writeCache(cacheFileName, cache)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
