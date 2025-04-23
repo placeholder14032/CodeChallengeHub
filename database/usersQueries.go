@@ -26,6 +26,18 @@ func SignUpUser(user User) error {
 		return err
 	}
 
+	cache, err := readCache(cacheFileName)
+	if err != nil {
+		return err
+	}
+
+	cache.UserCount += 1
+
+	err = writeCache(cacheFileName, cache)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
