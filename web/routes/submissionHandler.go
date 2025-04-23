@@ -12,7 +12,6 @@ import (
 
 	"fmt"
 	"os"
-	"strconv"
 )
 
 // @desc submit your answer to a problem
@@ -130,61 +129,8 @@ func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
 // @route GET /submission?id=<submission_id>
 // @access private (only accessible to the submission owner or admin)
 func GoSubmissionView(w http.ResponseWriter, r *http.Request) {
-    // Get current user ID from context
-    userIDValue := r.Context().Value(middleware.UserIDKey)
-    if userIDValue == nil {
-        http.Redirect(w, r, "/login-user", http.StatusSeeOther)
-        return
-    }
 
-    currentUserID, ok := userIDValue.(int)
-    if !ok {
-        http.Error(w, "Invalid user ID in context", http.StatusInternalServerError)
-        return
-    }
+	// renderTemplate(w, "/submission.html", data)
+    renderTemplate(w, "/submission.html", nil)
 
-    // Get page number from query parameter, default to 1
-    pageStr := r.URL.Query().Get("page")
-    page := 1
-    if pageStr != "" {
-        if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
-            page = p
-        }
-    }
-
-    // Define items per page
-    const itemsPerPage = 10
-
-    // Fetch submissions for the user
-    submissions, err := database.GetAllSubmissionsByUser(currentUserID, page, itemsPerPage)
-    if err != nil {
-        http.Error(w, "Failed to fetch submissions", http.StatusInternalServerError)
-        return
-    }
-
-    // Get total count for pagination
-    totalCount, err := database.GetTotalSubmissionsCount(currentUserID)
-    if err != nil {
-        http.Error(w, "Failed to get total count", http.StatusInternalServerError)
-        return
-    }
-
-    // Calculate total pages
-    totalPages := (totalCount + itemsPerPage - 1) / itemsPerPage
-
-    // Prepare template data
-    data := struct {
-        Submissions  []models.Submission
-        CurrentPage  int
-        TotalPages   int
-        ItemsPerPage int
-    }{
-        Submissions:  submissions,
-        CurrentPage:  page,
-        TotalPages:   totalPages,
-        ItemsPerPage: itemsPerPage,
-    }
-
-    // Render template
-    renderTemplate(w, "/submissions.html", data)
 }
