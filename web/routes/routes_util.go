@@ -3,6 +3,8 @@ package routes
 import(
 	"net/http"
 	"html/template"
+
+    "log"
 )
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -13,6 +15,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
     }
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
     if err := t.Execute(w, data); err != nil {
+        log.Printf("Template rendering failed for %s: %v", tmpl, err) // Add this log
         http.Error(w, "Template rendering failed", http.StatusInternalServerError)
         return
     }

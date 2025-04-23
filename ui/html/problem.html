@@ -49,6 +49,8 @@
             background: #f0f7ff;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            padding-bottom: 6rem;
+            min-height: 600px;
         }
 
         h1 {
@@ -119,21 +121,31 @@
 
         /* Submit Link */
         .submit-link {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            font-size: 1.1rem;
-            background-color: #ffeb99;
-            color: #2b4c7e;
-            border: 2px solid #ffe066;
-            border-radius: 50px;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.3s ease;
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        background-color: #ffeb99;
+        color: #2b4c7e;
+        border: 2px solid #ffe066;
+        width: 20%;
+        border-radius: 50px;
+        text-decoration: none;
+        text-align: center;
+         transition: all 0.3s ease;
+        z-index: 10;
+        position: relative;
         }
 
         .submit-link:hover {
             background-color: #ffe066;
             transform: scale(1.05);
+        }
+
+        .problem-section .submit-link {
+         display: block !important;
+        visibility: visible !important;
+        margin-top: 1rem;
+        text-align: center;
         }
 
         /* Footer */
@@ -220,9 +232,14 @@
             <pre>{{.Output}}</pre>
         </div>
 
+        <!-- <div class="problem-section">
+            <h1>Test Static Content</h1>
+        </div> -->
+
         <div class="problem-section">
             <a href="/submit_answer?problem={{.ID}}" class="submit-link">Submit Your Answer</a>
         </div>
     </main>
+
 </body>
 </html>

@@ -451,6 +451,7 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
         Output:      string(output),
 		TimeLimit:   problem.TimeLimit,
 		MemoryLimit: problem.MemoryLimit,
+		ID:          problem.ID,
     }
 
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
