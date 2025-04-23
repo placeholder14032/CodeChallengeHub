@@ -15,7 +15,7 @@ func SubmitCode(submission models.Submission) error {
 		VALUES (?, ?, ?, ?)
 	`
 
-	_, err := db.Exec(insertQuery, submission.User_id, submission.Problem_id, submission.Code_path, submission.Created_at)
+	_, err := db.Exec(insertQuery, submission.UserId, submission.ProblemId, submission.CodePath, submission.CreatedAt)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func GetAllSubmissionsByUser(user_id int) ([]models.Submission, error) {
 	var submissions []models.Submission
 	for rows.Next() {
 		var sub models.Submission
-		err := rows.Scan(&sub.Problem_id, &sub.Code_path, &sub.State, &sub.Created_at, &sub.Runtime_ms, &sub.Memory_used, &sub.Error_message)
+		err := rows.Scan(&sub.ProblemId, &sub.CodePath, &sub.State, &sub.CreatedAt, &sub.Runtime_ms, &sub.Memory_used, &sub.Error_message)
 		if err != nil {
 			return nil, err
 		}

@@ -14,19 +14,6 @@ import (
 	"os"
 )
 
-// we should make it compatible and same as pooya's
-type Submission struct {
-    ID             string
-    ProblemID      string
-    ProblemTitle   string 
-    UserID         string
-    OwnerUsername  string 
-    Code           string
-    Status         string // "Pending", "OK", "Compile Error", "Wrong Answer", "Memory Limit", "Time Limit", "Runtime Error"
-    TimeUsed       int  
-    SubmittedAt    time.Time
-}
-
 // @desc submit your answer to a problem
 // @route POST /api/submit_answer
 // @access private you can only access it if you are logged in
@@ -66,11 +53,11 @@ func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
 
     // Create submission record
     submission := models.Submission{
-        User_id:    userID,
-        Problem_id: req.ProblemID,
-        Code_path:  codePath,
+        UserId:    userID,
+        ProblemId: req.ProblemID,
+        CodePath:  codePath,
         State:      0, // 0 could represent "pending" state
-        Created_at: time.Now(),
+        CreatedAt: time.Now(),
         // Runtime_ms, Memory_used, and Error_message will be updated after evaluation
     }
 
