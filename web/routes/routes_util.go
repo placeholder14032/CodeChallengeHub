@@ -1,18 +1,14 @@
 package routes
 
-import (
-	"fmt"
-	"html/template"
+import(
 	"net/http"
-	"path/filepath"
+	"html/template"
 
-	"log"
+    "log"
 )
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-    fmt.Println("ui/html/" + tmpl)
-    templatePath := filepath.Join("ui", "html", tmpl)
-    t, err := template.ParseFiles(templatePath)
+    t, err := template.ParseFiles("ui/html/" + tmpl)
     if err != nil {
         http.Error(w, "Template not found", http.StatusInternalServerError)
         return

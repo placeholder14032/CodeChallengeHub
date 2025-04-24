@@ -39,10 +39,11 @@ func UpdateSubmission(submission models.Submission) error {
 
 func GetAllSubmissionsByUser(user_id int) ([]models.Submission, error) {
 	query := `
-		SELECT problem_id, code_path, state, created_at, runtime_ms, memory_used, error_message
-		FROM submissions
-		WHERE user_id = ?
-		ORDER BY created_at DESC
+		SELECT s.id, s.problem_id, p.title, s.code_path, s.state, s.created_at, s.runtime_ms, s.memory_used, s.error_message
+		FROM submissions s
+		JOIN problems p ON s.problem_id = p.id
+		WHERE s.user_id = ?
+		ORDER BY s.created_at DESC
 	`
 
 	rows, err := db.Query(query, user_id)
@@ -54,7 +55,7 @@ func GetAllSubmissionsByUser(user_id int) ([]models.Submission, error) {
 	var submissions []models.Submission
 	for rows.Next() {
 		var sub models.Submission
-		err := rows.Scan(&sub.ProblemId, &sub.CodePath, &sub.State, &sub.CreatedAt, &sub.Runtime_ms, &sub.Memory_used, &sub.Error_message)
+		err := rows.Scan(&sub.ID, &sub.ProblemId, &sub.ProblemTitle, &sub.CodePath, &sub.State, &sub.CreatedAt, &sub.Runtime_ms, &sub.Memory_used, &sub.Error_message)
 		if err != nil {
 			return nil, err
 		}

@@ -136,104 +136,103 @@ func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
     renderTemplate(w, "problem_submit.html", data)
 }
 
-// @desc get HTML page for a specific submission
-// @route GET /submission?id=<submission_id>
-// @access private (only accessible to the submission owner or admin)
+// @desc get HTML page for viewing user submissions
+// @route GET /my_submissions
+// @access private (only accessible to the logged-in user)
 func ViewSubmissionsByUser(w http.ResponseWriter, r *http.Request) {
-    // Get user ID from context
-    userIDValue := r.Context().Value(middleware.UserIDKey)
-    if userIDValue == nil {
-        log.Printf("ViewSubmissionsByUser: No user ID in context")
-        http.Redirect(w, r, "/login-user", http.StatusSeeOther)
-        return
-    }
+	// Get user ID from context
+	userIDValue := r.Context().Value(middleware.UserIDKey)
+	if userIDValue == nil {
+		log.Printf("ViewSubmissionsByUser: No user ID in context")
+		http.Redirect(w, r, "/login-user", http.StatusSeeOther)
+		return
+	}
 
-    userID, ok := userIDValue.(int)
-    if !ok {
-        log.Printf("ViewSubmissionsByUser: Invalid user ID type in context")
-        http.Error(w, "Invalid session", http.StatusInternalServerError)
-        return
-    }
+	userID, ok := userIDValue.(int)
+	if !ok {
+		log.Printf("ViewSubmissionsByUser: Invalid user ID type in context")
+		http.Error(w, "Invalid session", http.StatusInternalServerError)
+		return
+	}
 
-    // Fetch all submissions for the user
-    submissions, err := database.GetAllSubmissionsByUser(userID)
-    if err != nil {
-        log.Printf("ViewSubmissionsByUser: Error fetching submissions: %v", err)
-        http.Error(w, "Failed to fetch submissions", http.StatusInternalServerError)
-        return
-    }
+	// Fetch all submissions for the user
+	submissions, err := database.GetAllSubmissionsByUser(userID)
+	if err != nil {
+		log.Printf("ViewSubmissionsByUser: Error fetching submissions: %v", err)
+		http.Error(w, "Failed to fetch submissions", http.StatusInternalServerError)
+		return
+	}
 
-    // Get page number from query parameter
-    pageStr := r.URL.Query().Get("page")
-    page := 1
-    if pageStr != "" {
-        if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
-            page = p
-        }
-    }
+	// Get page number from query parameter
+	pageStr := r.URL.Query().Get("page")
+	page := 1
+	if pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
 
-    // Define items per page
-    const itemsPerPage = 10
+	// Define items per page
+	const itemsPerPage = 10
 
-    // Calculate pagination details
-    totalItems := len(submissions)
-    totalPages := (totalItems + itemsPerPage - 1) / itemsPerPage
+	// Calculate pagination details
+	totalItems := len(submissions)
+	totalPages := (totalItems + itemsPerPage - 1) / itemsPerPage
 
-    // Ensure the current page is within bounds
-    if page > totalPages {
-        page = totalPages
-    }
-    if page < 1 {
-        page = 1
-    }
+	// Ensure the current page is within bounds
+	if page > totalPages {
+		page = totalPages
+	}
+	if page < 1 {
+		page = 1
+	}
 
-    // Calculate start and end indices for the current page
-    start := (page - 1) * itemsPerPage
-    end := start + itemsPerPage
-    if end > totalItems {
-        end = totalItems
-    }
+	// Calculate start and end indices for the current page
+	start := (page - 1) * itemsPerPage
+	end := start + itemsPerPage
+	if end > totalItems {
+		end = totalItems
+	}
 
-    // Get the submissions for the current page
-    paginatedSubmissions := submissions[start:end]
+	// Get the submissions for the current page
+	paginatedSubmissions := submissions[start:end]
 
-    // Generate page numbers for navigation
-    var pageNumbers []int
-    for i := 1; i <= totalPages; i++ {
-        pageNumbers = append(pageNumbers, i)
-    }
+	// Generate page numbers for navigation
+	var pageNumbers []int
+	for i := 1; i <= totalPages; i++ {
+		pageNumbers = append(pageNumbers, i)
+	}
 
-    // Check if user is admin
-    isAdmin, err := database.GetUserRole(userID)
-    if err != nil {
-        log.Printf("ViewSubmissionsByUser: Error checking user role: %v", err)
-        http.Error(w, "Failed to check user role", http.StatusInternalServerError)
-        return
-    }
+	// Check if user is admin
+	isAdmin, err := database.GetUserRole(userID)
+	if err != nil {
+		log.Printf("ViewSubmissionsByUser: Error checking user role: %v", err)
+		http.Error(w, "Failed to check user role", http.StatusInternalServerError)
+		return
+	}
 
-    // Prepare template data
-    data := struct {
-        Submissions  []models.Submission
-        CurrentPage  int
-        PrevPage     int
-        NextPage     int
-        TotalPages   int
-        PageNumbers  []int
-        IsAdmin      bool
-        CurrentUser  int
-    }{
-        Submissions:  paginatedSubmissions,
-        CurrentPage:  page,
-        PrevPage:     page - 1,
-        NextPage:     page + 1,
-        TotalPages:   totalPages,
-        PageNumbers:  pageNumbers,
-        IsAdmin:      isAdmin == 1,
-        CurrentUser:  userID,
-    }
+	// Prepare template data
+	data := struct {
+		Submissions  []models.Submission
+		CurrentPage  int
+		PrevPage     int
+		NextPage     int
+		TotalPages   int
+		PageNumbers  []int
+		IsAdmin      bool
+		CurrentUser  int
+	}{
+		Submissions:  paginatedSubmissions,
+		CurrentPage:  page,
+		PrevPage:     page - 1,
+		NextPage:     page + 1,
+		TotalPages:   totalPages,
+		PageNumbers:  pageNumbers,
+		IsAdmin:      isAdmin == 1,
+		CurrentUser:  userID,
+	}
 
-    renderTemplate(w, "mySubmissions.html", data)
-
+	renderTemplate(w, "mySubmissions.html", data)
 }
 
 // @desc get HTML page for a specific submission

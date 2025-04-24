@@ -62,38 +62,142 @@
         .submissions-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
         }
 
         .submissions-table th,
         .submissions-table td {
             padding: 1rem;
-            border: 1px solid #e6f0fa;
-            text-align: left;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #567ebb;
         }
 
         .submissions-table th {
-            background-color: #f0f7ff;
+            background-color: #e6f0fa;
+            color: #2b4c7e;
+            font-weight: 600;
         }
 
+        .submissions-table tr {
+            border-bottom: 1px solid #e6f0fa;
+        }
+
+        .submissions-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .submissions-table a {
+            color: #2b4c7e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .submissions-table a:hover {
+            color: #567ebb;
+        }
+
+        /* Status Styling */
+        .status-Pending {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .status-OK {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-Compile-Error {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .status-Wrong-Answer {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .status-Memory-Limit {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .status-Time-Limit {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .status-Runtime-Error {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .status-Unknown {
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        /* Pagination */
         .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
+            text-align: center;
             margin-top: 2rem;
         }
 
-        .pagination a {
+        .pagination a,
+        .pagination span {
+            display: inline-block;
             padding: 0.5rem 1rem;
-            border: 1px solid #2b4c7e;
+            margin: 0 0.3rem;
+            font-size: 1rem;
+            color: #567ebb;
             text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #e6f0fa;
             color: #2b4c7e;
         }
 
-        .pagination .current {
-            background-color: #2b4c7e;
-            color: white;
-            padding: 0.5rem 1rem;
+        .pagination .current-page {
+            background-color: #ffeb99;
+            color: #2b4c7e;
+            font-weight: 600;
+        }
+
+        .pagination .disabled {
+            color: #a9c6e2;
+            pointer-events: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .submissions-container {
+                margin: 2rem;
+                padding: 1.5rem;
+            }
+
+            .submissions-table th,
+            .submissions-table td {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .submissions-table {
+                display: block;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
@@ -109,7 +213,7 @@
         </nav>
     </header>
 
-    <main class="container">
+    <main class="submissions-container">
         <h1>My Submissions</h1>
         
         <table class="submissions-table">
@@ -126,8 +230,8 @@
             <tbody>
                 {{range .Submissions}}
                 <tr>
-                    <td>{{.ProblemTitle}}</td>
-                    <td>{{.Status}}</td>
+                    <td><a href="/problem?id={{.ProblemId}}">{{.ProblemTitle}}</a></td>
+                    <td class="status-{{.State}}">{{.State}}</td>
                     <td>{{if gt .Runtime_ms 0}}{{.Runtime_ms}}ms{{else}}-{{end}}</td>
                     <td>{{if gt .Memory_used 0}}{{.Memory_used}}MB{{else}}-{{end}}</td>
                     <td>{{.CreatedAt.Format "2006-01-02 15:04:05"}}</td>
@@ -140,19 +244,23 @@
         {{if gt .TotalPages 1}}
         <div class="pagination">
             {{if gt .CurrentPage 1}}
-                <a href="/my_submissions?page={{.PrevPage}}">&laquo; Previous</a>
+                <a href="/my_submissions?page={{.PrevPage}}">« Previous</a>
+            {{else}}
+                <span class="disabled">« Previous</span>
             {{end}}
             
             {{range .PageNumbers}}
                 {{if eq . $.CurrentPage}}
-                    <span class="current">{{.}}</span>
+                    <span class="current-page">{{.}}</span>
                 {{else}}
                     <a href="/my_submissions?page={{.}}">{{.}}</a>
                 {{end}}
             {{end}}
             
             {{if lt .CurrentPage .TotalPages}}
-                <a href="/my_submissions?page={{.NextPage}}">Next &raquo;</a>
+                <a href="/my_submissions?page={{.NextPage}}">Next »</a>
+            {{else}}
+                <span class="disabled">Next »</span>
             {{end}}
         </div>
         {{end}}

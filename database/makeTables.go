@@ -51,7 +51,7 @@ func Connect() (*sql.DB, error) {
     );
     `
 
-	makeSubmissions := `
+    makeSubmissions := `
     CREATE TABLE IF NOT EXISTS submissions (
         id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         user_id INT NOT NULL,
@@ -61,7 +61,9 @@ func Connect() (*sql.DB, error) {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         runtime_ms INT DEFAULT 0,
         memory_used INT DEFAULT 0,
-        error_message TEXT
+        error_message TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
     );
     `
 
