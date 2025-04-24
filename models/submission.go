@@ -11,7 +11,8 @@ type Submission struct {
 	ProblemId     int            `json:"problem_id"`
 	ProblemTitle  string         `json:"problem_title"`
 	CodePath      string         `json:"code_path"`
-	State         int8           `json:"state"`
+	State        int       `json:"state"`      // Numeric state from database
+    Status       string    `json:"status"`     // String representation of state
 	CreatedAt     time.Time      `json:"created_at"`
 	Runtime_ms    int            `json:"runtime_ms"`
 	Memory_used   int            `json:"memory_used"`

@@ -101,44 +101,69 @@
         }
 
         /* Status Styling */
-        .status-Pending {
-            color: #ffc107;
+        .status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px; /* Curved rectangle */
+            font-size: 0.9rem;
             font-weight: 600;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-Pending {
+            background-color: #fff3cd; /* Pastel yellow */
+            color: #856404;
+            border: 1px solid #ffeeba;
         }
 
         .status-OK {
-            color: #28a745;
-            font-weight: 600;
+            background-color: #d4edda; /* Pastel green */
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         .status-Compile-Error {
-            color: #dc3545;
-            font-weight: 600;
+            background-color: #f8d7da; /* Pastel red */
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .status-Wrong-Answer {
-            color: #dc3545;
-            font-weight: 600;
+            background-color: #ffe5e5; /* Softer pastel red */
+            color: #721c24;
+            border: 1px solid #ffbaba;
         }
 
         .status-Memory-Limit {
-            color: #dc3545;
-            font-weight: 600;
+            background-color: #fcd1d1; /* Slightly different pastel red */
+            color: #721c24;
+            border: 1px solid #f8a5a5;
         }
 
         .status-Time-Limit {
-            color: #dc3545;
-            font-weight: 600;
+            background-color: #ffcccb; /* Another pastel red variant */
+            color: #721c24;
+            border: 1px solid #ff9999;
         }
 
         .status-Runtime-Error {
-            color: #dc3545;
-            font-weight: 600;
+            background-color: #f5c2c7; /* Yet another pastel red */
+            color: #721c24;
+            border: 1px solid #f0909a;
         }
 
         .status-Unknown {
-            color: #6c757d;
-            font-weight: 600;
+            background-color: #e2e3e5; /* Pastel gray */
+            color: #343a40;
+            border: 1px solid #d6d8db;
         }
 
         /* Pagination */
@@ -191,6 +216,11 @@
                 font-size: 0.9rem;
                 padding: 0.8rem;
             }
+
+            .status {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -231,7 +261,7 @@
                 {{range .Submissions}}
                 <tr>
                     <td><a href="/problem?id={{.ProblemId}}">{{.ProblemTitle}}</a></td>
-                    <td class="status-{{.State}}">{{.State}}</td>
+                    <td><span class="status status-{{.Status | replaceSpaces}}">{{.Status}}</span></td>
                     <td>{{if gt .Runtime_ms 0}}{{.Runtime_ms}}ms{{else}}-{{end}}</td>
                     <td>{{if gt .Memory_used 0}}{{.Memory_used}}MB{{else}}-{{end}}</td>
                     <td>{{.CreatedAt.Format "2006-01-02 15:04:05"}}</td>

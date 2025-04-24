@@ -78,7 +78,7 @@ func GetTotalSubmissionsCount(userID int) (int, error) {
 	return count, nil
 }
 
-func getStatusFromState(state int) string {
+func GetStatusFromState(state int) string {
 	switch state {
 	case 0:
 		return "Pending"

@@ -211,28 +211,34 @@ func ViewSubmissionsByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Prepare template data
-	data := struct {
-		Submissions  []models.Submission
-		CurrentPage  int
-		PrevPage     int
-		NextPage     int
-		TotalPages   int
-		PageNumbers  []int
-		IsAdmin      bool
-		CurrentUser  int
-	}{
-		Submissions:  paginatedSubmissions,
-		CurrentPage:  page,
-		PrevPage:     page - 1,
-		NextPage:     page + 1,
-		TotalPages:   totalPages,
-		PageNumbers:  pageNumbers,
-		IsAdmin:      isAdmin == 1,
-		CurrentUser:  userID,
-	}
+    // Convert states to status strings for the paginated submissions
+    for i, sub := range paginatedSubmissions {
+        paginatedSubmissions[i].Status = database.GetStatusFromState(sub.State)
+    }
 
-	renderTemplate(w, "mySubmissions.html", data)
+    // Prepare template data
+    data := struct {
+        Submissions  []models.Submission
+        CurrentPage  int
+        PrevPage     int
+        NextPage     int
+        TotalPages   int
+        PageNumbers  []int
+        IsAdmin      bool
+        CurrentUser  int
+    }{
+        Submissions:  paginatedSubmissions,  // Use paginated submissions
+        CurrentPage:  page,
+        PrevPage:     page - 1,
+        NextPage:     page + 1,
+        TotalPages:   totalPages,
+        PageNumbers:  pageNumbers,
+        IsAdmin:      isAdmin == 1,
+        CurrentUser:  userID,
+    }
+
+    // Use the correct template path without leading slash
+    renderTemplate(w, "mySubmissions.html", data)
 }
 
 // @desc get HTML page for a specific submission
