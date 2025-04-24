@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"encoding/json"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/placeHolder143032/CodeChallengeHub/database"
@@ -11,6 +11,7 @@ import (
 	"github.com/placeHolder143032/CodeChallengeHub/models"
 
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -18,35 +19,50 @@ import (
 // @route POST /api/submit_answer
 // @access private you can only access it if you are logged in
 func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
-    fmt.Print("wsdfgcjhcv kghc utdltuodsutkgfhgftckjtuxy")
-    // Get user ID from context (set by RequireAuth middleware)
+    fmt.Print("this is a print in the submit answer function to check if it is working")
+    // Parse multipart form
+    err := r.ParseMultipartForm(10 << 20) // 10 MB max memory
+    if err != nil {
+        log.Printf("SubmitAnswer: Failed to parse form: %v", err)
+        http.Error(w, "Failed to parse form", http.StatusBadRequest)
+        return
+    }
+
+    // Get user ID from context
     userID, ok := r.Context().Value(middleware.UserIDKey).(int)
     if !ok {
+        log.Printf("SubmitAnswer: User not authenticated")
         http.Error(w, "Unauthorized", http.StatusUnauthorized)
         return
     }
 
-    // Parse request body
-    type submitRequest struct {
-        ProblemID int    `json:"problem_id"`
-        Code      string `json:"code"`
-    }
-
-    var req submitRequest
-    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-        http.Error(w, "Invalid request body", http.StatusBadRequest)
+    // Get form values
+    problemID := r.FormValue("problem_id")
+    if problemID == "" {
+        log.Printf("SubmitAnswer: Missing problem ID")
+        http.Error(w, "Problem ID is required", http.StatusBadRequest)
         return
     }
 
-    // Validate input
-    if req.ProblemID <= 0 || req.Code == "" {
-        http.Error(w, "Missing required fields", http.StatusBadRequest)
+    code := r.FormValue("code")
+    if code == "" {
+        log.Printf("SubmitAnswer: Missing code")
+        http.Error(w, "Code is required", http.StatusBadRequest)
         return
     }
 
-    // Generate code file path (you might want to implement your own file storage logic)
-    codePath, err := saveCodeToFile(req.Code, userID, req.ProblemID)
+    // Convert problemID to int
+    pid, err := strconv.Atoi(problemID)
     if err != nil {
+        log.Printf("SubmitAnswer: Invalid problem ID: %v", err)
+        http.Error(w, "Invalid problem ID", http.StatusBadRequest)
+        return
+    }
+
+    // Save code to file
+    codePath, err := saveCodeToFile(code, userID, pid)
+    if err != nil {
+        log.Printf("SubmitAnswer: Failed to save code: %v", err)
         http.Error(w, "Failed to save code", http.StatusInternalServerError)
         return
     }
@@ -54,46 +70,37 @@ func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
     // Create submission record
     submission := models.Submission{
         UserId:    userID,
-        ProblemId: req.ProblemID,
+        ProblemId: pid,
         CodePath:  codePath,
-        State:      0, // 0 could represent "pending" state
+        State:     0, // pending
         CreatedAt: time.Now(),
-        // Runtime_ms, Memory_used, and Error_message will be updated after evaluation
     }
 
-    // Save submission to database
+    // Save to database
     err = database.SubmitCode(submission)
     if err != nil {
+        log.Printf("SubmitAnswer: Failed to save submission: %v", err)
         http.Error(w, "Failed to create submission", http.StatusInternalServerError)
         return
     }
 
-    // submition evaluation
-
-    // Send response
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusCreated)
-    json.NewEncoder(w).Encode(map[string]interface{}{
-        "message":     "Submission received",
-        "submission":  submission,
-    })
+    // Redirect to submissions page
+    http.Redirect(w, r, "/submissions", http.StatusSeeOther)
 }
 
 func saveCodeToFile(code string, userID, problemID int) (string, error) {
-    // Define base directory for code storage
     baseDir := "pkg"
     
-    // Create directory structure: submissions/user_{userID}/problem_{problemID}
+    // submissions/user_{userID}/problem_{problemID}
     userDir := fmt.Sprintf("%s/%d/submission", baseDir, userID)
     problemDir := fmt.Sprintf("%s/problem_%d", userDir, problemID)
     
-    // Ensure directories exist
     if err := os.MkdirAll(problemDir, 0755); err != nil {
         return "", fmt.Errorf("failed to create directories: %v", err)
     }
     
-    // Generate unique filename using timestamp
-    timestamp := time.Now().Format("20060102_150405") // Format: YYYYMMDD_HHMMSS
+    // timestamp for unique name
+    timestamp := time.Now().Format("20060102_150405")
     filename := fmt.Sprintf("submission_%s_%d_%d.go", timestamp, userID, problemID)
     filePath := filepath.Join(problemDir, filename)
     
@@ -107,7 +114,6 @@ func saveCodeToFile(code string, userID, problemID int) (string, error) {
         return "", fmt.Errorf("file was not created: %v", err)
     }
     
-    // Return absolute path
     absPath, err := filepath.Abs(filePath)
     if err != nil {
         return "", fmt.Errorf("failed to get absolute path: %v", err)
@@ -121,7 +127,19 @@ func saveCodeToFile(code string, userID, problemID int) (string, error) {
 // @route GET / submit_answer
 // @access private (you can only access this page if you are logged in)
 func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "problem_submit.html", nil)
+    problemID := r.URL.Query().Get("problem")
+    if problemID == "" {
+        http.Error(w, "Problem ID is required", http.StatusBadRequest)
+        return
+    }
+
+    data := struct {
+        ProblemID string
+    }{
+        ProblemID: problemID,
+    }
+
+    renderTemplate(w, "problem_submit.html", data)
 }
 
 
