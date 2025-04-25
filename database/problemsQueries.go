@@ -11,36 +11,36 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// this one is for admins since it doesnt check if its published or not
+// this one is for admins we womt check if its published or not anymore
 func GetProblemsPageAdmin(m, n int) ([]models.Problem, error) {
-	var problems []models.Problem
-	query := `
-		SELECT id, title
-		FROM problems
-		ORDER BY created_at DESC
-		LIMIT ? OFFSET ?
-	`
-	offset := (m - 1) * n
+    var problems []models.Problem
+    query := `
+        SELECT id, title, created_at, is_published
+        FROM problems
+        ORDER BY created_at DESC
+        LIMIT ? OFFSET ?
+    `
+    offset := (m - 1) * n
 
-	rows, err := db.Query(query, n, offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+    rows, err := db.Query(query, n, offset)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
 
-	for rows.Next() {
-		var p models.Problem
-		if err := rows.Scan(&p.ID, &p.Title); err != nil {
-			return nil, err
-		}
-		problems = append(problems, p)
-	}
+    for rows.Next() {
+        var p models.Problem
+        if err := rows.Scan(&p.ID, &p.Title, &p.CreatedTime, &p.IsPublished); err != nil {
+            return nil, err
+        }
+        problems = append(problems, p)
+    }
 
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
 
-	return problems, nil
+    return problems, nil
 }
 
 // this one is for users since it does check if its published or not
