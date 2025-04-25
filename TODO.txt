@@ -4,10 +4,9 @@ Left from front to be fully done:
 -- remove styles from html to css
 ** in case of error in signup and ... we might redirect and igonore the error kepp an eye on this
 
--- [ ] implementing: password doesn't match error in signup user
--- [ ] implementing: error handling in login
+-- [*] implementing: password doesn't match error in signup user
+-- [*] implementing: error handling in login
 
--- [ ] check regex
 
 -- [*] bcrypt
 
@@ -18,19 +17,28 @@ Left from front to be fully done:
 
 
 
-- [ ] error handling in login/signup
-- [ ] Admin role management
+- [*] error handling in login/signup
+- [X] Admin role management
 
   - [ ] Calculate success rate
-- [ ] Admin features in profile
-  - [ ] Role change button (only visible to admins)
-  - [ ] Role change confirmation
+- [*] Admin features in profile
+  - [*] Role change button (only visible to admins)
 
-  - [ ] Draft status by default
-  - [ ] Filter published/draft status
-  - [ ] Submit solution button
+  - [*] Filter published/draft status
 
 
-- [ ] Admin-only routes protection
+- [*] Admin-only routes protection
 
-- [ ] Error message displays
+- [X] Error message displays
+
+-- [ ] view my problems for each user
+-- [ ] problem rates and stuff 
+
+-- [ ] edit problem, delete is not necessary
+
+-- [ ] change password user!!!
+
+-- [ ] docker file 
+-- [ ] code runner connect
+
+-- [ ] Load/Test connect
