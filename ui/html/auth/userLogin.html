@@ -147,6 +147,15 @@
           padding: 1.5rem;
         }
       }
+
+      .error-message {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -160,19 +169,26 @@
     </header>
 
     <main class="login-container">
-      <h1>Login User</h1>
-      <form action="/api/auth/login-user" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required />
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
-        <button type="submit">Login</button>
-        <div class="toggle-link">
-          <p>
-            Don't have an account?
-            <a href="/register-user" id="user-register-link">Register</a>
-          </p>
-        </div>
+      <h1>Signup User</h1>
+      {{if .Error}}
+      <div class="error-message">
+          {{.Error}}
+      </div>
+      {{end}}
+      <form action="/api/auth/register-user" method="POST">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" value="{{.Username}}" required>
+          
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required>
+          
+          <label for="passwordConfirm">Repeat Your Password:</label>
+          <input type="password" id="passwordConfirm" name="passwordConfirm" required>
+          
+          <button type="submit">Signup</button>
+          <div class="toggle-link">
+              <p>Do you have an account already? <a href="/login-user" id="user-login-link">Login</a></p>
+          </div>
       </form>
     </main>
   </body>
