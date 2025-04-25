@@ -1,7 +1,7 @@
 package models
 
 import(
-	// "time"
+	"time"
 )
 
 type ProblemData struct {
@@ -11,7 +11,8 @@ type ProblemData struct {
 	Explanation string    `json:"description"`
 	Input      string    `json:"input"`
 	Output      string    `json:"output"`
-	// CreatedTime       time.Time `json:"created_time"`
+	CreatedTime       time.Time `json:"created_time"`
+	PublishedAt   *time.Time `json:"published_at"`
 	IsPublished     bool      `json:"is_published"`
 	TimeLimit	   int       `json:"time_limit"`
 	MemoryLimit  	int       `json:"memory_limit"`

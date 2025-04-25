@@ -77,11 +77,20 @@ func Connect() (*sql.DB, error) {
     );
     `
 
+    addPublishedColumn := `
+    ALTER TABLE problems
+    ADD COLUMN published_at TIMESTAMP NULL DEFAULT NULL
+    `
+
 	_, err = db.Exec(makeUsers)
 	if err != nil {
 		return nil, err
 	}
 	_, err = db.Exec(makeProblems)
+	if err != nil {
+		return nil, err
+	}
+    _, err = db.Exec(addPublishedColumn)
 	if err != nil {
 		return nil, err
 	}
@@ -93,6 +102,7 @@ func Connect() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+    
 	return db, nil
 }
 

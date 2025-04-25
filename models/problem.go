@@ -15,4 +15,6 @@ type Problem struct {
 	IsPublished     bool      `json:"is_published"`
 	TimeLimit	   int       `json:"time_limit"`
 	MemoryLimit  	int       `json:"memory_limit"`
+	PublishedAt   *time.Time `json:"published_at"`
+
 }
