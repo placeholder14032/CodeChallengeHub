@@ -8,9 +8,10 @@
         /* Global Styles */
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: #f9fcff;
             color: #2b4c7e;
+            line-height: 1.6;
         }
 
         /* Header */
@@ -18,23 +19,32 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 2rem;
+            padding: 1.5rem 3rem;
             background-color: #e6f0fa;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
             font-size: 1.8rem;
-            font-weight: 600;
+            font-weight: 700;
             color: #2b4c7e;
-            padding-left: 2%;
+            letter-spacing: -0.02em;
+        }
+
+        header nav {
+            display: flex;
+            gap: 2rem;
         }
 
         header nav a {
             color: #567ebb;
             text-decoration: none;
-            margin-left: 1.5rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
 
         header nav a:hover {
@@ -43,28 +53,30 @@
 
         /* Main Container */
         .profile-container {
-            max-width: 800px;
-            margin: 4rem auto;
-            padding: 2rem;
-            background: #f0f7ff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
         /* Profile Header */
         .profile-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
         .profile-header h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
+            font-weight: 700;
             color: #2b4c7e;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .profile-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 400;
             color: #567ebb;
         }
 
@@ -76,118 +88,142 @@
         /* Profile Status */
         .profile-status {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
         .status-card {
-            background: #fff;
+            background: #f0f7ff;
             padding: 1.5rem;
-            border-radius: 10px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .status-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
 
         .status-card h3 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #2b4c7e;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
         }
 
         .status-card p {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: #567ebb;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        /* CTA Buttons */
+        .cta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            padding: 0.9rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            background-color: #ffeb99;
+            color: #2b4c7e;
+            border: 2px solid #ffe066;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background-color: #ffe066;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* Admin Controls */
         .admin-controls {
             border-top: 1px solid #e6f0fa;
-            padding-top: 2rem;
+            padding-top: 2.5rem;
+            margin-top: 2rem;
         }
 
         .admin-controls h3 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            font-weight: 600;
             color: #2b4c7e;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
         }
 
-        .admin-controls form {
-            display: inline-block;
-            margin: 0 0.5rem;
-        }
-
-        .admin-controls button {
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            background-color: #ffeb99;
-            color: #2b4c7e;
-            border: 2px solid #ffe066;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .admin-controls button:hover {
-            background-color: #ffe066;
-            transform: scale(1.05);
+        .admin-controls .cta-buttons {
+            justify-content: center;
         }
 
         /* Footer */
         footer {
             text-align: center;
-            padding: 1rem;
+            padding: 1.5rem;
             background-color: #e6f0fa;
             color: #567ebb;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            header {
+                padding: 1rem 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            header nav {
+                gap: 1rem;
+            }
+
+            .profile-container {
+                margin: 1.5rem;
+                padding: 1.5rem;
+            }
+
             .profile-header h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
 
             .profile-header h2 {
                 font-size: 1.2rem;
             }
 
-            .profile-container {
-                margin: 2rem;
-                padding: 1.5rem;
-            }
-
             .profile-status {
                 grid-template-columns: 1fr;
             }
-        }
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 3rem;
-            font-size: 1.2rem;
-            background-color: #ffeb99; 
-            color: #2b4c7e;
-            border: none;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-color: #ffe066;
-            border-style: solid;
+
+            .cta-button {
+                width: 100%;
+                text-align: center;
+            }
         }
 
-        .cta-button:hover {
-            background-color: #ffe066;
-            transform: scale(1.05);
-        }
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5rem;
+            }
 
+            header nav a {
+                font-size: 0.9rem;
+            }
+
+            .status-card p {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -196,7 +232,7 @@
         <nav>
             <a href="/login-user">Login</a>
             <a href="/register-user">Sign Up</a>
-            <a href="/login-admin">Admin-Login</a>
+            <a href="/login-admin">Admin Login</a>
         </nav>
     </header>
 
@@ -219,30 +255,31 @@
                 <h3>Questions Solved</h3>
                 <p id="solved">{{.SolvedProblems}}</p>
             </div>
+        </div>
 
+        <div class="cta-buttons">
             <a href="/my_submissions" class="cta-button">View My Submissions</a>
-            <a href="/logout" class="cta-button">Logout</a>
-            <!-- <a href="/edit-profile" class="cta-button">Edit Profile</a>
-            <a href="/change-password" class="cta-button">Change Password</a> -->
-            <form action="/add-problem" method="POST" style="display: inline;">
-                <button type="submit" class="cta-button" style="cursor: pointer;">Add Problem</button>
-            </form>
             <a href="/allproblems-user" class="cta-button">View Problems</a>
-            
+            <form action="/add-problem" method="POST" style="display: inline;">
+                <button type="submit" class="cta-button">Add Problem</button>
+            </form>
+            <a href="/logout" class="cta-button">Logout</a>
         </div>
 
         <!-- Admin controls - only visible to administrators -->
         {{if .IsAdmin}}
         <div class="admin-controls">
             <h3>Admin Controls</h3>
-            <form action="/add-admin" method="POST">
-                <input type="hidden" name="userID" value="{{.ID}}">
-                <button type="submit">Make Admin</button>
-            </form>
-            <form action="/remove-admin" method="POST">
-                <input type="hidden" name="userID" value="{{.ID}}">
-                <button type="submit">Remove Admin Access</button>
-            </form>
+            <div class="cta-buttons">
+                <form action="/add-admin" method="POST">
+                    <input type="hidden" name="userID" value="{{.ID}}">
+                    <button type="submit" class="cta-button">Make Admin</button>
+                </form>
+                <form action="/remove-admin" method="POST">
+                    <input type="hidden" name="userID" value="{{.ID}}">
+                    <button type="submit" class="cta-button">Remove Admin Access</button>
+                </form>
+            </div>
         </div>
         {{end}}
     </main>
