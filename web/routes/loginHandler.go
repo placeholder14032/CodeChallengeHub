@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/placeHolder143032/CodeChallengeHub/database"
@@ -13,7 +13,6 @@ import (
 // @route POST /api/auth/login-user
 // @access public
 func LoginUser(w http.ResponseWriter, r *http.Request) {
-	// fmt.Print("alskvhlafshvha")
     if r.Method != http.MethodPost {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
@@ -22,34 +21,61 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
     username := r.FormValue("username")
     password := r.FormValue("password")
 
+    // Validate input
+    if username == "" || password == "" {
+        data := struct {
+            Error    string
+            Username string
+        }{
+            Error:    "Username and password are required",
+            Username: username,
+        }
+        renderTemplate(w, "auth/userLogin.html", data)
+        return
+    }
+
     user := models.User{
         Username: username,
         Password: password,
     }
 
-    userID, sessionID, err := database.SignInUser(user)
+    // Attempt login
+    _, sessionID, err := database.SignInUser(user)
     if err != nil {
-        // http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-		errors.New(err.Error())
-		fmt.Print(err)
+        var errorMsg string
+        switch err.Error() {
+        case "user does not exist":
+            errorMsg = "Invalid username or password"
+        case "wrong password":
+            errorMsg = "Invalid username or password"
+        default:
+            log.Printf("Login error: %v", err)
+            errorMsg = "Error during login"
+        }
+
+        data := struct {
+            Error    string
+            Username string
+        }{
+            Error:    errorMsg,
+            Username: username,
+        }
+        renderTemplate(w, "auth/userLogin.html", data)
         return
     }
 
-	fmt.Println("User ID:", userID) //  idk how to use it or write it in db
-
     // Set session cookie
-    cookie := http.Cookie{
-        Name:     "session_id",
+    cookie := &http.Cookie{
+        Name:     "session",
         Value:    sessionID,
         Path:     "/",
         HttpOnly: true,
-        Secure:   false, // Set to true in production later
-        MaxAge:   24 * 60 * 60, // 1 day
+        Secure:   true,
+        MaxAge:   3600 * 24, // 24 hours
     }
+    http.SetCookie(w, cookie)
 
-    http.SetCookie(w, &cookie)
-
-    // Redirect to profile page
+    // Redirect to problems page on success
     http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
@@ -78,7 +104,6 @@ func  LoginAdmin(w http.ResponseWriter, r *http.Request) {
 	targetUser.ID = id
 	// targetUser.Is_admin = 1
 
-	// TODO
 	if(err!=nil){
 		fmt.Println("Error:", err)
 	}else{

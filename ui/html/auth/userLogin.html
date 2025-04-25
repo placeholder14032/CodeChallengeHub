@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login User</title>
-    <!-- <link rel="stylesheet" href="../css/auth.css"> -->
+    <title>Login - CodeChallengeHub</title>
     <style>
       /* Global Styles */
       body {
@@ -73,19 +72,14 @@
 
       input[type="text"],
       input[type="password"] {
-        padding: 0.8rem;
-        font-size: 1rem;
-        border: 2px solid #e6f0fa;
-        border-radius: 10px;
-        background-color: #fff;
-        color: #2b4c7e;
-        transition: border-color 0.3s ease;
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
       }
 
-      input[type="text"]:focus,
-      input[type="password"]:focus {
-        border-color: #ffeb99;
-        outline: none;
+      input.error {
+        border-color: #c62828;
       }
 
       button[type="submit"] {
@@ -156,6 +150,22 @@
         margin-bottom: 1.5rem;
         text-align: center;
       }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      input.error {
+        border-color: #c62828;
+      }
     </style>
   </head>
   <body>
@@ -164,31 +174,36 @@
       <nav>
         <a href="/login-user">Login</a>
         <a href="/register-user">Sign Up</a>
-        <a href="/login-admin">Admin-Login</a>
+        <a href="/login-admin">Admin Login</a>
       </nav>
     </header>
 
     <main class="login-container">
-      <h1>Signup User</h1>
+      <h1>Login</h1>
       {{if .Error}}
-      <div class="error-message">
-          {{.Error}}
-      </div>
+      <div class="error-message">{{.Error}}</div>
       {{end}}
-      <form action="/api/auth/register-user" method="POST">
+      <form action="/api/auth/login-user" method="POST">
+        <div class="form-group">
           <label for="username">Username:</label>
-          <input type="text" id="username" name="username" value="{{.Username}}" required>
-          
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value="{{.Username}}"
+            required
+          />
+        </div>
+
+        <div class="form-group">
           <label for="password">Password:</label>
-          <input type="password" id="password" name="password" required>
-          
-          <label for="passwordConfirm">Repeat Your Password:</label>
-          <input type="password" id="passwordConfirm" name="passwordConfirm" required>
-          
-          <button type="submit">Signup</button>
-          <div class="toggle-link">
-              <p>Do you have an account already? <a href="/login-user" id="user-login-link">Login</a></p>
-          </div>
+          <input type="password" id="password" name="password" required />
+        </div>
+
+        <button type="submit">Login</button>
+        <div class="toggle-link">
+          <p>Don't have an account? <a href="/register-user">Sign Up</a></p>
+        </div>
       </form>
     </main>
   </body>
