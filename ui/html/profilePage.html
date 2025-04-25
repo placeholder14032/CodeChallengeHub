@@ -235,7 +235,7 @@
         {{if .IsAdmin}}
         <div class="admin-controls">
             <h3>Admin Controls</h3>
-            <form action="/make-admin" method="POST">
+            <form action="/add-admin" method="POST">
                 <input type="hidden" name="userID" value="{{.ID}}">
                 <button type="submit">Make Admin</button>
             </form>

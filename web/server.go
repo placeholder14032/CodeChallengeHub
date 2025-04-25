@@ -67,5 +67,17 @@ func (a *Application) routes() http.Handler {
     mux.HandleFunc("/publish-problem",  middleware.RequireAuth(routes.PublishProblem)) // Go to submit answer page
 
 
+    // Admin-only routes
+    mux.HandleFunc("/add-admin", middleware.RequireAdmin(routes.GoAddAdminPage)) // Add admin page
+    mux.HandleFunc("/remove-admin", middleware.RequireAdmin(routes.GoRemoveAdminPage)) // Remove admin page
+    mux.HandleFunc("/api/make-admin", middleware.RequireAdmin(routes.MakeAdmin)) // Handle add admin form
+    mux.HandleFunc("/api/remove-admin", middleware.RequireAdmin(routes.RemoveAdmin)) // Handle remove admin form
+
+
+    // mux.HandleFunc("/add-admin", routes.GoAddAdminPage) // Add admin page
+    // mux.HandleFunc("/remove-admin", routes.GoRemoveAdminPage) // Remove admin page
+    // mux.HandleFunc("/api/make-admin", routes.MakeAdmin) // Handle add admin form
+    // mux.HandleFunc("/api/remove-admin", routes.RemoveAdmin) // Handle remove admin form
+
     return mux
 }

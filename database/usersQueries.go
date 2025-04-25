@@ -104,19 +104,48 @@ func GetUserRole(id int) (int, error) {
 	return is_admin, nil
 }
 
-func ChangeUserRole(id int) error {
+
+func MakeAdmin(id int) error {
 	query := `
 	UPDATE users
-	SET is_admin = CASE
-		WHEN is_admin = 0 THEN 1
-		WHEN is_admin = 1 THEN 0
-		ELSE is_admin
-	END
+	SET is_admin = 1
 	WHERE id = ? LIMIT 1
 	`
-	_, err := db.Exec(query, id)
+	result, err := db.Exec(query, id)
 	if err != nil {
 		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New("user does not exist")
+	}
+
+	return nil
+}
+
+func RemoveAdmin(id int) error {
+	query := `
+	UPDATE users
+	SET is_admin = 0
+	WHERE id = ? LIMIT 1
+	`
+	result, err := db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New("user does not exist")
 	}
 
 	return nil
