@@ -108,7 +108,7 @@ func PublishProblem(w http.ResponseWriter, r *http.Request) {
     }
 
     // Update problem status in database
-    err = database.PublishProblem(pid)
+    err = database.ToggleProblemPublishStatus(pid)
     if err != nil {
         log.Printf("Error publishing problem %d: %v", pid, err)
         http.Error(w, "Failed to publish problem", http.StatusInternalServerError)

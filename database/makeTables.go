@@ -36,20 +36,21 @@ func Connect() (*sql.DB, error) {
     `
 
 	makeProblems := `
-    CREATE TABLE IF NOT EXISTS problems (
-        id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        user_id INT NOT NULL,
-        title VARCHAR(50) NOT NULL,
-        difficulty VARCHAR(20) NOT NULL,
-        description_path VARCHAR(255) NOT NULL,
-        input_path VARCHAR(255) NOT NULL,
-        output_path VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        is_published BOOLEAN DEFAULT FALSE,
-        time_limit_ms INT,
-        memory_limit_mb INT
-    );
-    `
+CREATE TABLE IF NOT EXISTS problems (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    title VARCHAR(50) NOT NULL,
+    difficulty VARCHAR(20) NOT NULL,
+    description_path VARCHAR(255) NOT NULL,
+    input_path VARCHAR(255) NOT NULL,
+    output_path VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_published BOOLEAN DEFAULT FALSE,
+    published_at TIMESTAMP NULL DEFAULT NULL,
+    time_limit_ms INT,
+    memory_limit_mb INT
+);
+`
 
     makeSubmissions := `
     CREATE TABLE IF NOT EXISTS submissions (
@@ -77,11 +78,6 @@ func Connect() (*sql.DB, error) {
     );
     `
 
-    addPublishedColumn := `
-    ALTER TABLE problems
-    ADD COLUMN published_at TIMESTAMP NULL DEFAULT NULL
-    `
-
 	_, err = db.Exec(makeUsers)
 	if err != nil {
 		return nil, err
@@ -90,19 +86,21 @@ func Connect() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-    _, err = db.Exec(addPublishedColumn)
+	_, err = db.Exec(makeSubmissions)
 	if err != nil {
 		return nil, err
 	}
+    // _, err = db.Exec(addPublishedColumn)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	_, err = db.Exec(makeSubmissions)
 	if err != nil {
 		return nil, err
 	}
 	_, err = db.Exec(makeSessions)
-	if err != nil {
-		return nil, err
-	}
-    
-	return db, nil
+    if err != nil {		
+        return nil, err	
+    }    
+    return db, nil
 }
-

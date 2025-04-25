@@ -121,17 +121,43 @@ func AddProblem(userID int, problem models.Problem) error {
     return err
 }
 
-func PublishProblem(problemID int) error {
-    query := `
-        UPDATE problems 
-        SET is_published = TRUE,
-            published_at = CURRENT_TIMESTAMP 
-        WHERE id = ?
-    `
-    
-    result, err := db.Exec(query, problemID)
+func ToggleProblemPublishStatus(problemID int) error {
+    tx, err := db.Begin()
     if err != nil {
-        return fmt.Errorf("database error: %v", err)
+        return fmt.Errorf("failed to begin transaction: %v", err)
+    }
+    defer tx.Rollback()
+
+    // First check current status
+    var isCurrentlyPublished bool
+    err = tx.QueryRow("SELECT is_published FROM problems WHERE id = ?", problemID).Scan(&isCurrentlyPublished)
+    if err != nil {
+        return fmt.Errorf("failed to get current status: %v", err)
+    }
+
+    // Prepare update query based on current status
+    var query string
+    if isCurrentlyPublished {
+        // If currently published, unpublish it
+        query = `
+            UPDATE problems 
+            SET is_published = FALSE,
+                published_at = NULL
+            WHERE id = ?
+        `
+    } else {
+        // If currently unpublished, publish it
+        query = `
+            UPDATE problems 
+            SET is_published = TRUE,
+                published_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `
+    }
+
+    result, err := tx.Exec(query, problemID)
+    if err != nil {
+        return fmt.Errorf("failed to update problem status: %v", err)
     }
 
     rowsAffected, err := result.RowsAffected()
@@ -141,6 +167,10 @@ func PublishProblem(problemID int) error {
 
     if rowsAffected == 0 {
         return fmt.Errorf("problem not found")
+    }
+
+    if err = tx.Commit(); err != nil {
+        return fmt.Errorf("failed to commit transaction: %v", err)
     }
 
     return nil
