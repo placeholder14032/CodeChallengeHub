@@ -79,7 +79,7 @@ func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Failed to create submission", http.StatusInternalServerError)
         return
     }
-    http.Redirect(w, r, "/submissions", http.StatusSeeOther)
+    http.Redirect(w, r, "/my_submissions", http.StatusSeeOther)
 }
 
 func saveCodeToFile(code string, userID, problemID int) (string, error) {

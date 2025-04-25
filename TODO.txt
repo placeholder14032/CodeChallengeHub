@@ -14,4 +14,23 @@ Left from front to be fully done:
 // for admin login we are not storing hashed password i guess later while creating admin user we need to bcrypt password or sth
 
 -- [*] submit answer
--- [ ] view submissions
+-- [*] view submissions
+
+
+
+- [ ] error handling in login/signup
+- [ ] Admin role management
+
+  - [ ] Calculate success rate
+- [ ] Admin features in profile
+  - [ ] Role change button (only visible to admins)
+  - [ ] Role change confirmation
+
+  - [ ] Draft status by default
+  - [ ] Filter published/draft status
+  - [ ] Submit solution button
+
+
+- [ ] Admin-only routes protection
+
+- [ ] Error message displays
