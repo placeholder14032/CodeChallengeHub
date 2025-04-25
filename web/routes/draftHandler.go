@@ -73,10 +73,10 @@ func PublishProblem(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Check if user is admin
+    // Get user ID from context and verify admin status
     userIDValue := r.Context().Value(middleware.UserIDKey)
     if userIDValue == nil {
-        http.Redirect(w, r, "/login-admin", http.StatusSeeOther)
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
         return
     }
 
@@ -86,16 +86,11 @@ func PublishProblem(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // Verify admin status
     isAdmin, err := database.GetUserRole(userID)
     if err != nil || isAdmin != 1 {
-        http.Error(w, "Unauthorized", http.StatusForbidden)
-        return
-    }
-
-    // Parse form
-    err = r.ParseForm()
-    if err != nil {
-        http.Error(w, "Unable to parse form", http.StatusBadRequest)
+        log.Printf("Unauthorized publish attempt by user %d", userID)
+        http.Error(w, "Only admins can publish problems", http.StatusForbidden)
         return
     }
 
@@ -106,21 +101,20 @@ func PublishProblem(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Convert problem ID to int
     pid, err := strconv.Atoi(problemID)
     if err != nil {
         http.Error(w, "Invalid problem ID", http.StatusBadRequest)
         return
     }
 
-    // Toggle problem publish status
+    // Update problem status in database
     err = database.PublishProblem(pid)
     if err != nil {
-        log.Printf("Error toggling publish status for problem %d: %v", pid, err)
-        http.Error(w, "Failed to update problem status", http.StatusInternalServerError)
+        log.Printf("Error publishing problem %d: %v", pid, err)
+        http.Error(w, "Failed to publish problem", http.StatusInternalServerError)
         return
     }
 
-    // Redirect back to admin problems list
-    http.Redirect(w, r, "/problems-admin", http.StatusSeeOther)
+    // Redirect back to problems list
+    http.Redirect(w, r, "/allproblems-admin", http.StatusSeeOther)
 }

@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/placeHolder143032/CodeChallengeHub/models"
@@ -120,17 +121,29 @@ func AddProblem(userID int, problem models.Problem) error {
     return err
 }
 
-func PublishProblem(id int) error {
-	query := `
-	UPDATE problems SET is_published = NOT is_published
-	WHERE id = ? LIMIT 1
-	`
-	_, err := db.Exec(query, id)
-	if err != nil {
-		return err
-	}
+func PublishProblem(problemID int) error {
+    query := `
+        UPDATE problems 
+        SET is_published = TRUE,
+            published_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+    `
+    
+    result, err := db.Exec(query, problemID)
+    if err != nil {
+        return fmt.Errorf("database error: %v", err)
+    }
 
-	return nil
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        return fmt.Errorf("error checking affected rows: %v", err)
+    }
+
+    if rowsAffected == 0 {
+        return fmt.Errorf("problem not found")
+    }
+
+    return nil
 }
 
 func GetSingleProblem(id int) (models.Problem, error) {
