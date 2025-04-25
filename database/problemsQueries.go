@@ -53,6 +53,7 @@ func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
             created_at,
             is_published
         FROM problems
+        WHERE is_published = true
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?
     `
@@ -85,7 +86,6 @@ func GetProblemsPageUser(m, n int) ([]models.Problem, error) {
         return nil, err
     }
 
-    // log.Printf("Problems fetched: %+v", problems)
     return problems, nil
 }
 
@@ -196,7 +196,19 @@ func EditProblem(db *sql.DB, user_id, problem_id int, title string, time_limit_m
 	return nil
 }
 
+// For users: count only published problems
 func GetTotalProblemsCount() (int, error) {
+    var count int
+    err := db.QueryRow("SELECT COUNT(*) FROM problems WHERE is_published = true").Scan(&count)
+    if err != nil {
+        log.Printf("Error counting problems: %v", err)
+        return 0, err
+    }
+    return count, nil
+}
+
+// For admins: count all problems
+func GetTotalProblemsCountAdmin() (int, error) {
     var count int
     err := db.QueryRow("SELECT COUNT(*) FROM problems").Scan(&count)
     if err != nil {

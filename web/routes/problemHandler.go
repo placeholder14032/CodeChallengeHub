@@ -284,88 +284,6 @@ func generatePageNumbers(currentPage, totalPages int) []int {
 	return pages
 }
 
-// @desc get HTML page for user's submissions with pagination
-// @route GET /submissions?page=<number>
-// @access private (only accessible to logged-in users)
-// func GoSubmissionsPage(w http.ResponseWriter, r *http.Request) {
-// 	userID := "user123" // Replace with actual user ID from auth system
-
-// 	// Get page number from query parameter, default to 1
-// 	pageStr := r.URL.Query().Get("page")
-// 	page, err := strconv.Atoi(pageStr)
-// 	if err != nil || page < 1 {
-// 		page = 1
-// 	}
-
-// 	// Define items per page
-// 	const itemsPerPage = 5
-
-// 	// TODO: Fetch submissions from database for the current user
-// 	// For now, using static data
-// 	allSubmissions := []Submission{
-// 		{ID: "s1", ProblemID: "1", ProblemTitle: "Two Sum", UserID: userID, Code: "func twoSum(nums []int, target int) []int {\n    for i := 0; i < len(nums); i++ {\n        for j := i + 1; j < len(nums); j++ {\n            if nums[i] + nums[j] == target {\n                return []int{i, j}\n            }\n        }\n    }\n    return nil\n}", Status: "OK", SubmittedAt: time.Now().Add(-24 * time.Hour)},
-// 		{ID: "s2", ProblemID: "2", ProblemTitle: "Add Two Numbers", UserID: userID, Code: "func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {\n    // ...", Status: "Wrong Answer", SubmittedAt: time.Now().Add(-20 * time.Hour)},
-// 		{ID: "s3", ProblemID: "3", ProblemTitle: "Longest Substring", UserID: userID, Code: "func lengthOfLongestSubstring(s string) int {\n    // ...", Status: "Time Limit", SubmittedAt: time.Now().Add(-15 * time.Hour)},
-// 		{ID: "s4", ProblemID: "4", ProblemTitle: "Three Sum", UserID: userID, Code: "func threeSum(nums []int) [][]int {\n    // ...", Status: "Pending", SubmittedAt: time.Now().Add(-10 * time.Hour)},
-// 		{ID: "s5", ProblemID: "5", ProblemTitle: "Gorg Ali", UserID: userID, Code: "func gorgAli() {\n    // ...", Status: "Compile Error", SubmittedAt: time.Now().Add(-5 * time.Hour)},
-// 		{ID: "s6", ProblemID: "7", ProblemTitle: "DFS", UserID: userID, Code: "func dfs(graph [][]int) {\n    // ...", Status: "OK", SubmittedAt: time.Now()},
-// 	}
-
-// 	// Filter submissions for the current user (in real app, this would be a DB query)
-// 	var userSubmissions []Submission
-// 	for _, sub := range allSubmissions {
-// 		if sub.UserID == userID {
-// 			userSubmissions = append(userSubmissions, sub)
-// 		}
-// 	}
-
-// 	// Calculate pagination details
-// 	totalItems := len(userSubmissions)
-// 	totalPages := int(math.Ceil(float64(totalItems) / float64(itemsPerPage)))
-
-// 	// Ensure page doesn't exceed total pages
-// 	if page > totalPages {
-// 		page = totalPages
-// 	}
-
-// 	// Calculate start and end indices
-// 	start := (page - 1) * itemsPerPage
-// 	end := start + itemsPerPage
-// 	if end > totalItems {
-// 		end = totalItems
-// 	}
-
-// 	submissions := userSubmissions[start:end]
-
-// 	// Generate page numbers for navigation
-// 	var pageNumbers []int
-// 	for i := 1; i <= totalPages; i++ {
-// 		pageNumbers = append(pageNumbers, i)
-// 	}
-
-// 	// Prepare data for template
-// 	data := struct {
-// 		Submissions []Submission
-// 		CurrentPage int
-// 		PrevPage    int
-// 		NextPage    int
-// 		TotalPages  int
-// 		PageNumbers []int
-// 	}{
-// 		Submissions: submissions,
-// 		CurrentPage: page,
-// 		PrevPage:    page - 1,
-// 		NextPage:    page + 1,
-// 		TotalPages:  totalPages,
-// 		PageNumbers: pageNumbers,
-// 	}
-
-// 	renderTemplate(w, "my_submission.html", data)
-// }
-
-// @desc get HTML page for each problem page
-// @route GET /problem
-// @access private (you can only access this page if you are logged in)
 func GoProblemPage(w http.ResponseWriter, r *http.Request) {
     // Get problem ID from URL parameter
     problemID := r.URL.Query().Get("id")
@@ -381,7 +299,7 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Get userID from context with detailed logging
+    // Get userID from context
     userIDValue := r.Context().Value(middleware.UserIDKey)
     if userIDValue == nil {
         log.Printf("Unauthorized: No UserIDKey in context for request %s", r.URL.String())
@@ -409,17 +327,18 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // isAdmin, err := database.GetUserRole(userID)
+    // Check if user is admin or problem creator
+    isAdmin, err := database.GetUserRole(userID)
     if err != nil {
         log.Printf("Error fetching user role for user %d: %v", userID, err)
         http.Error(w, "Internal server error", http.StatusInternalServerError)
         return
     }
 
-    // if !problem.IsPublished && isAdmin == 0 {
-    //     http.Error(w, "Problem not available", http.StatusForbidden)
-    //     return
-    // }
+    if !problem.IsPublished && isAdmin == 0 && problem.UserID != userID {
+        http.Error(w, "Problem not available", http.StatusForbidden)
+        return
+    }
 
     // Read description, input, and output files
     description, err := os.ReadFile(problem.DescriptionPath)
@@ -445,16 +364,86 @@ func GoProblemPage(w http.ResponseWriter, r *http.Request) {
 
     // Prepare template data
     data := models.ProblemData{
-        Title:     problem.Title,
+        Title:       problem.Title,
         Explanation: string(description),
         Input:       string(input),
         Output:      string(output),
-		TimeLimit:   problem.TimeLimit,
-		MemoryLimit: problem.MemoryLimit,
-		ID:          problem.ID,
+        TimeLimit:   problem.TimeLimit,
+        MemoryLimit: problem.MemoryLimit,
+        ID:          problem.ID,
     }
 
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
     renderTemplate(w, "problem.html", data)
+}
+
+
+// @desc get HTML page for all problems with pagination (admin view)
+// @route GET /problems-admin?page=<number>
+// @access private (admin only)
+func GoProblemsListPageAdmin(w http.ResponseWriter, r *http.Request) {
+    // Check if user is admin
+    userIDValue := r.Context().Value(middleware.UserIDKey)
+    if userIDValue == nil {
+        http.Redirect(w, r, "/login-admin", http.StatusSeeOther)
+        return
+    }
+
+    userID, ok := userIDValue.(int)
+    if !ok {
+        http.Error(w, "Invalid session", http.StatusInternalServerError)
+        return
+    }
+
+    isAdmin, err := database.GetUserRole(userID)
+    if err != nil || isAdmin != 1 {
+        http.Error(w, "Unauthorized", http.StatusForbidden)
+        return
+    }
+
+    // Get page number from query parameters
+    pageStr := r.URL.Query().Get("page")
+    page := 1
+    if pageStr != "" {
+        if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+            page = p
+        }
+    }
+
+    itemsPerPage := 10
+    problems, err := database.GetProblemsPageAdmin(page, itemsPerPage)
+    if err != nil {
+        log.Printf("Error fetching problems: %v", err)
+        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+        return
+    }
+
+    // Get total count for pagination
+    totalCount, err := database.GetTotalProblemsCountAdmin()
+    if err != nil {
+        log.Printf("Error getting total count: %v", err)
+        http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+        return
+    }
+
+    totalPages := (totalCount + itemsPerPage - 1) / itemsPerPage
+
+    data := struct {
+        Problems    []models.Problem
+        CurrentPage int
+        PrevPage    int
+        NextPage    int
+        TotalPages  int
+        PageNumbers []int
+    }{
+        Problems:    problems,
+        CurrentPage: page,
+        PrevPage:    page - 1,
+        NextPage:    page + 1,
+        TotalPages:  totalPages,
+        PageNumbers: generatePageNumbers(page, totalPages),
+    }
+
+    renderTemplate(w, "problemsListAdmin.html", data)
 }

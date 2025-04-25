@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/placeHolder143032/CodeChallengeHub/models"
 
@@ -166,4 +167,29 @@ func UpdateUserProblemStats() error {
 		return err
 	}
 	return nil
+}
+
+
+func CreateAdminUser(username, password string) error {
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return fmt.Errorf("failed to hash password: %v", err)
+    }
+
+	fmt.Println("print in create admin user befor query")
+
+    query := `
+        INSERT INTO users (username, password, is_admin)
+        VALUES (?, ?, 1)
+    `
+
+    _, err = db.Exec(query, username, hashedPassword)
+    if err != nil {
+        return fmt.Errorf("failed to create admin user: %v", err)
+    }
+
+	fmt.Println("print in create admin after befor query yayyyy")
+
+
+    return nil
 }

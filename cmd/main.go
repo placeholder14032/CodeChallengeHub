@@ -33,6 +33,16 @@ func main() {
         InfoLog: log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile),
     }
 
+            // // Admin credentials
+            // username := "admin"
+            // password := "admin123" // Change this to a secure password
+        
+            // // Create admin user
+            // err = database.CreateAdminUser(username, password)
+            // if err != nil {
+            //     log.Fatalf("Failed to create admin user: %v", err)
+            // }
+            
     if err := app.Listen(); err != nil {
         log.Fatal(err)
     }
@@ -41,4 +51,6 @@ func main() {
 	// if err != nil {
 	// 	panic(err)
 	// }
+
+
 }

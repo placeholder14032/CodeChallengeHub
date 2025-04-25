@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin: Coding Problems - Code Challenge Hub</title>
+    <style>
+      /* Reuse styles from problemsList.html */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f9fcff;
+        color: #2b4c7e;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: #e6f0fa;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #2b4c7e;
+      }
+
+      header nav a {
+        color: #567ebb;
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      header nav a:hover {
+        color: #2b4c7e;
+      }
+
+      .problems-container {
+        max-width: 1000px;
+        margin: 4rem auto;
+        padding: 2rem;
+        background: #f0f7ff;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        color: #2b4c7e;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .problems-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+      }
+
+      .problems-table th,
+      .problems-table td {
+        padding: 1rem;
+        text-align: left;
+        font-size: 1rem;
+        color: #567ebb;
+      }
+
+      .problems-table th {
+        background-color: #e6f0fa;
+        color: #2b4c7e;
+        font-weight: 600;
+      }
+
+      .problems-table tr {
+        border-bottom: 1px solid #e6f0fa;
+      }
+
+      .problems-table tr:last-child {
+        border-bottom: none;
+      }
+
+      .problems-table a {
+        color: #2b4c7e;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .problems-table a:hover {
+        color: #567ebb;
+      }
+
+      .solve-button, .publish-button {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        font-size: 1rem;
+        background-color: #ffeb99;
+        color: #2b4c7e;
+        border: 2px solid #ffe066;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+      }
+
+      .publish-button {
+        background-color: #99ffeb;
+        border-color: #66ffe0;
+      }
+
+      .solve-button:hover, .publish-button:hover {
+        background-color: #ffe066;
+        transform: scale(1.05);
+      }
+
+      .publish-button:hover {
+        background-color: #66ffe0;
+      }
+
+      .pagination {
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      .pagination a,
+      .pagination span {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        margin: 0 0.3rem;
+        font-size: 1rem;
+        color: #567ebb;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .pagination a:hover {
+        background-color: #e6f0fa;
+        color: #2b4c7e;
+      }
+
+      .pagination .current {
+        background-color: #ffeb99;
+        color: #2b4c7e;
+        font-weight: 600;
+      }
+
+      .pagination .disabled {
+        color: #a9c6e2;
+        pointer-events: none;
+      }
+
+      footer {
+        text-align: center;
+        padding: 1rem;
+        background-color: #e6f0fa;
+        color: #567ebb;
+        width: 100%;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .problems-container {
+          margin: 2rem;
+          padding: 1.5rem;
+        }
+
+        .problems-table th,
+        .problems-table td {
+          font-size: 0.9rem;
+          padding: 0.8rem;
+        }
+
+        .solve-button, .publish-button {
+          padding: 0.4rem 1rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .problems-table {
+          display: block;
+          overflow-x: auto;
+        }
+
+        .problems-table th,
+        .problems-table td {
+          min-width: 100px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">CodeChallengeHub</div>
+      <nav>
+        <a href="/login-user">Login</a>
+        <a href="/register-user">Sign Up</a>
+        <a href="/login-admin">Admin-Login</a>
+      </nav>
+    </header>
+
+    <main class="problems-container">
+      <h1>Admin: Coding Problems</h1>
+      <table class="problems-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Problems}}
+          <tr>
+            <td><a href="/problem?id={{.ID}}">{{.Title}}</a></td>
+            <td>{{.CreatedTime.Format "2006-01-02 15:04:05"}}</td>
+            <td>{{if .IsPublished}}Published{{else}}Draft{{end}}</td>
+            <td>
+              <a href="/problem?id={{.ID}}" class="solve-button">View</a>
+              <form action="/publish-problem" method="POST" style="display:inline;">
+                <input type="hidden" name="problem_id" value="{{.ID}}" />
+                <button type="submit" class="publish-button">
+                  {{if .IsPublished}}Unpublish{{else}}Publish{{end}}
+                </button>
+              </form>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        {{if gt .CurrentPage 1}}
+        <a href="?page={{.PrevPage}}">« Previous</a>
+        {{end}} {{range .PageNumbers}} {{if eq . $.CurrentPage}}
+        <span class="current">{{.}}</span>
+        {{else}}
+        <a href="?page={{.}}">{{.}}</a>
+        {{end}} {{end}} {{if lt .CurrentPage .TotalPages}}
+        <a href="?page={{.NextPage}}">Next »</a>
+        {{end}}
+      </div>
+    </main>
+  </body>
+</html>

@@ -177,6 +177,21 @@
                 padding: 0.8rem 1.5rem;
                 font-size: 1rem;
             }
+
+            .draft-button {
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            background-color: #567ebb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            }
+
+           .draft-button:hover {
+            background-color: #2b4c7e;
+            }
         }
     </style>
 </head>
@@ -191,6 +206,7 @@
     </header>
 
     <main class="add-problem-container">
+        <a href="/problems" class="back-link">Back to Problems List</a>
         <h1>Add New Problem</h1>
         <form action="/add-problem" method="POST">
             <div class="form-group">
@@ -233,9 +249,21 @@
             </div>
 
             <button type="submit">Create Problem</button>
+
+            {{if .IsAdmin}}
+            <form
+              action="/draft-problem"
+              method="POST"
+              style="display: inline"
+            >
+              <input type="hidden" name="problem_id" value="{{.ID}}" />
+              <button type="submit" class="draft-button">
+                {{if .IsPublished}}Make Draft{{else}}Publish{{end}}
+              </button>
+            </form>
+            {{end}}
         </form>
 
-        <a href="/problems" class="back-link">Back to Problems List</a>
     </main>
 </body>
 </html>
