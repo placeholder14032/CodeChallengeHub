@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Controls - CodeChallengeHub</title>
+    <style>
+      /* Global Styles */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f9fcff;
+        color: #2b4c7e;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: #e6f0fa;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #2b4c7e;
+      }
+
+      /* Main Container */
+      .admin-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      }
+
+      /* User List */
+      .user-list {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2rem;
+      }
+
+      .user-list th,
+      .user-list td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e6f0fa;
+      }
+
+      .user-list th {
+        background-color: #f0f7ff;
+        font-weight: 600;
+      }
+
+      /* Admin Control Buttons */
+      .admin-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .make-admin {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .make-admin:hover {
+        background-color: #45a049;
+      }
+
+      .remove-admin {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .remove-admin:hover {
+        background-color: #da190b;
+      }
+
+      /* Status Badge */
+      .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .admin {
+        background-color: #e6f0fa;
+        color: #2b4c7e;
+      }
+
+      .user {
+        background-color: #f0f7ff;
+        color: #567ebb;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">CodeChallengeHub</div>
+      <nav>
+        <a href="/problems">Problems</a>
+        <a href="/my_submissions">My Submissions</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </header>
+
+    <main class="admin-container">
+      <h1>User Management</h1>
+      <table class="user-list">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Current Role</th>
+            <th>Registration Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Users}}
+          <tr>
+            <td>{{.Username}}</td>
+            <td>
+              <span
+                class="status-badge {{if .IsAdmin}}admin{{else}}user{{end}}"
+              >
+                {{if .IsAdmin}}Admin{{else}}User{{end}}
+              </span>
+            </td>
+            <td>{{.CreatedAt.Format "2006-01-02 15:04:05"}}</td>
+            <td>
+              <form
+                action="/toggle-admin"
+                method="POST"
+                style="display: inline"
+              >
+                <input type="hidden" name="userID" value="{{.ID}}" />
+                {{if .IsAdmin}}
+                <button type="submit" class="admin-button remove-admin">
+                  Remove Admin
+                </button>
+                {{else}}
+                <button type="submit" class="admin-button make-admin">
+                  Make Admin
+                </button>
+                {{end}}
+              </form>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
