@@ -222,3 +222,10 @@ func CreateAdminUser(username, password string) error {
 
     return nil
 }
+
+
+func GetUserIDFromSession(sessionToken string) (int, error) {
+    var userID int
+    err := db.QueryRow("SELECT user_id FROM sessions WHERE token = $1", sessionToken).Scan(&userID)
+    return userID, err
+}

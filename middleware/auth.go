@@ -14,13 +14,14 @@ const UserIDKey contextKey = "userID"
 
 func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        cookie, err := r.Cookie("session_id")
+        cookie, err := r.Cookie("session_id") 
         if err != nil {
             log.Printf("No session cookie for request %s: %v", r.URL.String(), err)
             http.Redirect(w, r, "/login-user", http.StatusSeeOther)
             return
         }
 
+        log.Printf("Found cookie: session_id=%s for request %s", cookie.Value, r.URL.String())
         userID, valid, err := database.ValidateSession(cookie.Value)
         if err != nil {
             log.Printf("Session validation error for session %s on request %s: %v", 

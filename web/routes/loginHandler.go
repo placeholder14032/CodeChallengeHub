@@ -66,12 +66,13 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
     // Set session cookie
     cookie := &http.Cookie{
-        Name:     "session",
+        Name:     "session_id",
         Value:    sessionID,
         Path:     "/",
         HttpOnly: true,
         Secure:   true,
         MaxAge:   3600 * 24, // 24 hours
+        SameSite: http.SameSiteLaxMode,
     }
     http.SetCookie(w, cookie)
 
@@ -82,32 +83,48 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 // @desc login and check password for signin admin user
 // @route POST /api/auth/login-admin
 // @access public
-func  LoginAdmin(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("Login admin")
+func LoginAdmin(w http.ResponseWriter, r *http.Request) {
+    fmt.Print("Login admin\n")
 
-	// Parse the request body
-	username := r.FormValue("username")
-	password := r.FormValue("corp-key")
-	fmt.Print("Username:", username)
-	fmt.Println(", Password:", password)
+    // Parse the request body
+    username := r.FormValue("username")
+    password := r.FormValue("corp-key")
+    fmt.Printf("Username: %s, Password: %s\n", username, password)
 
-	// create user
-	targetUser := models.User{
-		Username: username,
-		Password: password,
-	}
+    targetUser := models.User{
+        Username: username,
+        Password: password,
+    }
 
-	id,sessionID,err := database.SignInUser(targetUser)
+    id, sessionID, err := database.SignInUser(targetUser)
+    fmt.Printf("Session ID: %s\n", sessionID)
 
-	fmt.Print("Session ID:", sessionID) //  idk how to use it for now
+    targetUser.ID = id
 
-	targetUser.ID = id
-	// targetUser.Is_admin = 1
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        data := struct {
+            Error    string
+            Username string
+        }{
+            Error:    "Invalid username or password",
+            Username: username,
+        }
+        renderTemplate(w, "auth/adminLogin.html", data) 
+        return
+    }
 
-	if(err!=nil){
-		fmt.Println("Error:", err)
-	}else{
-	// Redirect to profile page with status code 303 (See Other)
-	http.Redirect(w, r, "/profile", http.StatusSeeOther)
-	}
+    // Set session cookie
+    cookie := &http.Cookie{
+        Name:     "session_id",
+        Value:    sessionID,
+        Path:     "/",
+        HttpOnly: true,
+        Secure:   true,
+        MaxAge:   3600 * 24, // 24 hours
+        SameSite: http.SameSiteLaxMode,
+    }
+    http.SetCookie(w, cookie)
+
+    http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
