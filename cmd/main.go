@@ -5,8 +5,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/placeHolder143032/CodeChallengeHub/database"
 	"github.com/placeHolder143032/CodeChallengeHub/web"
-    "github.com/placeHolder143032/CodeChallengeHub/database"
+    "github.com/placeHolder143032/CodeChallengeHub/judge"
 
 )
 
@@ -43,9 +44,15 @@ func main() {
             //     log.Fatalf("Failed to create admin user: %v", err)
             // }
             
+    // Start judge server
+    go func() {
+        judge.Server(8081);
+    }()
+    
     if err := app.Listen(); err != nil {
         log.Fatal(err)
     }
+
 
     // _, err := database.Connect()
 	// if err != nil {

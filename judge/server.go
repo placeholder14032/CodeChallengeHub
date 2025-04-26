@@ -115,7 +115,7 @@ func queryHandler(w http.ResponseWriter, r *http.Request) {
 	writeAnswer(w, res.String())
 }
 
-func server(port int, ) {
+func Server(port int, ) {
 	makedirs()
 
 	http.HandleFunc("/submit", submitHandler)
