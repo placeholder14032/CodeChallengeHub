@@ -34,7 +34,7 @@ func addFile(w *multipart.Writer, name string, filename string) error {
 	return nil
 }
 
-func submitToJudge(source, input, output string, timelimit, memlimit int64, url string) (int64, error) {
+func SubmitToJudge(source, input, output string, timelimit, memlimit int64, url string) (int64, error) {
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
 
@@ -76,7 +76,7 @@ func submitToJudge(source, input, output string, timelimit, memlimit int64, url 
 	return id, err
 }
 
-func queryState(id int64, url string) (RunResults, error){
+func QueryState(id int64, url string) (RunResults, error){
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
 
@@ -105,7 +105,7 @@ func queryState(id int64, url string) (RunResults, error){
 	return runres, err
 }
 
-func dumpRequestOut(r *http.Request) {
+func DumpRequestOut(r *http.Request) {
 	b, _ := httputil.DumpRequestOut(r, true)
 	fmt.Println(string(b))
 }

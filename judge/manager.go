@@ -2,7 +2,7 @@ package judge
 
 import (
 	"context"
-	"math/rand/v2"
+	"math/rand"
 	"os"
 	"path"
 	"strconv"
@@ -88,7 +88,7 @@ func runProblem(source, input, output []byte, timel, mem int64, id int64) {
 }
 
 func addProblem(source, input, output []byte, time, mem int64) (int64) {
-	id := rand.Int64() // probability of collision is 1:2^63 which is good enough i guess
+	id := rand.Int63() // probability of collision is 1:2^63 which is good enough i guess
 	problem := Problem{
 		ID: id,
 		State: Pending,

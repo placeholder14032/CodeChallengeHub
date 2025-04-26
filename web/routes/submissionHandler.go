@@ -13,13 +13,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/placeHolder143032/CodeChallengeHub/judge"
 )
 
 // @desc submit your answer to a problem
 // @route POST /api/submit_answer
 // @access private you can only access it if you are logged in
 func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
-    // fmt.Print("this is a print in the submit answer function to check if it is working")
     err := r.ParseMultipartForm(10 << 20) // 10 MB max memory
     if err != nil {
         log.Printf("SubmitAnswer: Failed to parse form: %v", err)
@@ -121,16 +122,42 @@ func saveCodeToFile(code string, userID, problemID int) (string, error) {
 // @route GET / submit_answer
 // @access private (you can only access this page if you are logged in)
 func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
+    if r.Method == "POST" {
+        // Call SubmitCode for handling submission
+        SubmitCode(w, r)
+        return
+    }
+
+    // GET method - show submission form
     problemID := r.URL.Query().Get("problem")
     if problemID == "" {
         http.Error(w, "Problem ID is required", http.StatusBadRequest)
         return
     }
 
+    pid, err := strconv.Atoi(problemID)
+    if err != nil {
+        http.Error(w, "Invalid problem ID", http.StatusBadRequest)
+        return
+    }
+
+    problem, err := database.GetSingleProblem(pid)
+    if err != nil {
+        log.Printf("Error fetching problem: %v", err)
+        http.Error(w, "Problem not found", http.StatusNotFound)
+        return
+    }
+
     data := struct {
-        ProblemID string
+        ProblemID     string
+        Title         string
+        TimeLimit     int64
+        MemoryLimit   int64
     }{
-        ProblemID: problemID,
+        ProblemID:   problemID,
+        Title:       problem.Title,
+        TimeLimit:   int64(problem.TimeLimit),
+        MemoryLimit: int64(problem.MemoryLimit),
     }
 
     renderTemplate(w, "problem_submit.html", data)
@@ -248,4 +275,120 @@ func GoSubmissionView(w http.ResponseWriter, r *http.Request) {
 	// renderTemplate(w, "/submission.html", data)
     renderTemplate(w, "/submission.html", nil)
 
+}
+
+func pollJudgeResult(submissionID int64, judgeID int64) {
+    maxAttempts := 30 // 5 minutes maximum polling time
+    for attempt := 0; attempt < maxAttempts; attempt++ {
+        result, err := judge.QueryState(judgeID, "http://localhost:8081/query")
+        if err != nil {
+            log.Printf("Error querying judge state: %v", err)
+            return
+        }
+
+        if result != judge.Pending {
+            // Update submission state in database
+            err = database.UpdateSubmissionState(submissionID, int(result))
+            if err != nil {
+                log.Printf("Error updating submission state: %v", err)
+            }
+            return
+        }
+
+        time.Sleep(10 * time.Second) // Poll every 10 seconds
+    }
+
+    // If we reach here, submission timed out
+    err := database.UpdateSubmissionState(submissionID, 6) // Runtime Error
+    if err != nil {
+        log.Printf("Error updating submission state: %v", err)
+    }
+}
+
+func SubmitCode(w http.ResponseWriter, r *http.Request) {
+    err := r.ParseMultipartForm(10 << 20)
+    if err != nil {
+        log.Printf("SubmitAnswer: Failed to parse form: %v", err)
+        http.Error(w, "Failed to parse form", http.StatusBadRequest)
+        return
+    }
+
+    userID, ok := r.Context().Value(middleware.UserIDKey).(int)
+    if !ok {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
+
+    problemID := r.FormValue("problem_id")
+    if problemID == "" {
+        http.Error(w, "Problem ID is required", http.StatusBadRequest)
+        return
+    }
+
+    code := r.FormValue("code")
+    if code == "" {
+        http.Error(w, "Code is required", http.StatusBadRequest)
+        return
+    }
+
+    pid, err := strconv.Atoi(problemID)
+    if err != nil {
+        http.Error(w, "Invalid problem ID", http.StatusBadRequest)
+        return
+    }
+
+    // Save code to file
+    codePath, err := saveCodeToFile(code, userID, pid)
+    if err != nil {
+        log.Printf("Error saving code: %v", err)
+        http.Error(w, "Failed to save code", http.StatusInternalServerError)
+        return
+    }
+
+    // Get problem details for judge
+    problem, err := database.GetSingleProblem(pid)
+    if err != nil {
+        log.Printf("Error fetching problem: %v", err)
+        http.Error(w, "Problem not found", http.StatusNotFound)
+        return
+    }
+
+    // Submit to judge
+    judgeID, err := judge.SubmitToJudge(
+        codePath,
+        problem.InputPath,
+        problem.OutputPath,
+        int64(problem.TimeLimit),
+        int64(problem.MemoryLimit),
+        "http://localhost:8081/submit",
+    )
+    if err != nil {
+        log.Printf("Judge submission error: %v", err)
+        http.Error(w, "Failed to submit to judge", http.StatusInternalServerError)
+        return
+    }
+
+    // Create submission record with pending state
+    submission := models.Submission{
+        UserId:      userID,
+        ProblemId:   pid,
+        CodePath:    codePath,
+        State:       0, // pending
+        JudgeID:    judgeID,
+        CreatedAt:   time.Now(),
+    }
+
+    // Save submission to database
+    err = database.SubmitCode(submission)
+    if err != nil {
+        log.Printf("Error saving submission: %v", err)
+        http.Error(w, "Failed to save submission", http.StatusInternalServerError)
+        return
+    }
+
+    // Start a goroutine to poll for results
+    go pollJudgeResult(int64(submission.ID), judgeID)
+
+    // Redirect to submissions page
+    http.Redirect(w, r, "/my_submissions", http.StatusSeeOther)
 }

@@ -98,3 +98,9 @@ func GetStatusFromState(state int) string {
 		return "Unknown"
 	}
 }
+
+func UpdateSubmissionState(submissionID int64, state int) error {
+    query := "UPDATE submissions SET state = ? WHERE id = ?"
+    _, err := db.Exec(query, state, submissionID)
+    return err
+}

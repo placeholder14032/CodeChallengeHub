@@ -17,4 +17,5 @@ type Submission struct {
 	Runtime_ms    int            `json:"runtime_ms"`
 	Memory_used   int            `json:"memory_used"`
 	Error_message sql.NullString `json:"error_message"`
+	JudgeID 	int64 
 }
