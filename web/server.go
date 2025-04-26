@@ -63,7 +63,7 @@ func (a *Application) routes() http.Handler {
 
     mux.HandleFunc("/my_submissions",  middleware.RequireAuth(routes.ViewSubmissionsByUser)) // my submissions page
     mux.HandleFunc("/submit_answer",  middleware.RequireAuth(routes.GoSubmitAnswer)) // Go to submit answer page
-    mux.HandleFunc("/api/submit_problem",  middleware.RequireAuth(routes.SubmitAnswer)) 
+    mux.HandleFunc("/api/submit_problem",  middleware.RequireAuth(routes.PostSubmit)) 
     mux.HandleFunc("/publish-problem",  middleware.RequireAuth(routes.PublishProblem)) // Go to submit answer page
 
 

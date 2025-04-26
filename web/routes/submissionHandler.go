@@ -119,11 +119,12 @@ func saveCodeToFile(code string, userID, problemID int) (string, error) {
 
 
 // @desc get Html page for submitting problem
-// @route GET / submit_answer
+// @route GET /submit_answer
 // @access private (you can only access this page if you are logged in)
 func GoSubmitAnswer(w http.ResponseWriter, r *http.Request) {
     if r.Method == "POST" {
         // Call SubmitCode for handling submission
+        fmt.Println("GoSubmitAnswer: POST method detected, calling SubmitCode")
         SubmitCode(w, r)
         return
     }
@@ -277,6 +278,18 @@ func GoSubmissionView(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// @desc handeling post request
+// @route POST /api/submit_answer
+// @access private (you can only access this page if you are logged in)
+func PostSubmit(w http.ResponseWriter, r *http.Request) {
+    if r.Method == "POST" {
+        // Call SubmitCode for handling submission
+        fmt.Println("GoSubmitAnswer: POST method detected, calling SubmitCode")
+        SubmitCode(w, r)
+        return
+    }
+}
+
 func pollJudgeResult(submissionID int64, judgeID int64) {
     maxAttempts := 30 // 5 minutes maximum polling time
     for attempt := 0; attempt < maxAttempts; attempt++ {
@@ -306,6 +319,7 @@ func pollJudgeResult(submissionID int64, judgeID int64) {
 }
 
 func SubmitCode(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("SubmitCode called")
     err := r.ParseMultipartForm(10 << 20)
     if err != nil {
         log.Printf("SubmitAnswer: Failed to parse form: %v", err)
