@@ -17,7 +17,12 @@ import (
 	"github.com/placeHolder143032/CodeChallengeHub/judge"
 )
 
+const (
+	MB_SIZE = 1024 * 1024
+)
+
 // @desc submit your answer to a problem
+// but we forgor to call it :skull:
 // @route POST /api/submit_answer
 // @access private you can only access it if you are logged in
 func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +79,7 @@ func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
         CreatedAt: time.Now(),
     }
 
-    err = database.SubmitCode(submission)
+    _, err = database.SubmitCode(submission)
     if err != nil {
         log.Printf("SubmitAnswer: Failed to save submission: %v", err)
         http.Error(w, "Failed to create submission", http.StatusInternalServerError)
@@ -372,8 +377,8 @@ func SubmitCode(w http.ResponseWriter, r *http.Request) {
         codePath,
         problem.InputPath,
         problem.OutputPath,
-        int64(problem.TimeLimit),
-        int64(problem.MemoryLimit),
+        int64(problem.TimeLimit * int(time.Millisecond)),
+        int64(problem.MemoryLimit * MB_SIZE),
         "http://localhost:8081/submit",
     )
     if err != nil {
@@ -393,7 +398,7 @@ func SubmitCode(w http.ResponseWriter, r *http.Request) {
     }
 
     // Save submission to database
-    err = database.SubmitCode(submission)
+    lastid, err := database.SubmitCode(submission)
     if err != nil {
         log.Printf("Error saving submission: %v", err)
         http.Error(w, "Failed to save submission", http.StatusInternalServerError)
@@ -401,7 +406,7 @@ func SubmitCode(w http.ResponseWriter, r *http.Request) {
     }
 
     // Start a goroutine to poll for results
-    go pollJudgeResult(int64(submission.ID), judgeID)
+    go pollJudgeResult(lastid, judgeID)
 
     // Redirect to submissions page
     http.Redirect(w, r, "/my_submissions", http.StatusSeeOther)

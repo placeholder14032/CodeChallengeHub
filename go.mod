@@ -1,11 +1,11 @@
 module github.com/placeHolder143032/CodeChallengeHub
 
-go 1.23.0
+go 1.23.7
 
 toolchain go1.24.0
 
 require (
-	github.com/docker/docker v28.1.1+incompatible
+	github.com/docker/docker v28.0.4+incompatible
 	github.com/go-sql-driver/mysql v1.9.2
 	golang.org/x/crypto v0.37.0
 	golang.org/x/sync v0.13.0
@@ -23,7 +23,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
-	github.com/moby/sys/atomicwriter v0.1.0 // indirect
 	github.com/moby/term v0.5.2 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect

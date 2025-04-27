@@ -12,10 +12,10 @@ var db *sql.DB
 func Connect() (*sql.DB, error) {
 	var err error
 
-	username := "amabilis"           // your MySQL username
-	password := "amabilisfi20050921" // your MySQL password
+	username := "pooya"           // your MySQL username
+	password := "pass" // your MySQL password
 	hostname := "127.0.0.1:3306"
-	dbname := "codeChallemgeHub" // your MySQL database name
+	dbname := "codeChallengeHub" // your MySQL database name
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", username, password, hostname, dbname)
 
@@ -29,7 +29,7 @@ func Connect() (*sql.DB, error) {
         id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
-        isAdmin BOOLEAN DEFAULT 0,
+        is_admin BOOLEAN DEFAULT 0,
         attemptedProblems INT DEFAULT 0,
         solvedProblems INT DEFAULT 0
     );

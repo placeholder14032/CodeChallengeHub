@@ -90,6 +90,8 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(time, mem)
 	id := addProblem(source, input, output, time, mem)
+
+	fmt.Println("problem id: ", id)
 	
 	strid := strconv.FormatInt(id, 10)
 	writeAnswer(w, strid)

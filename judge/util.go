@@ -5,26 +5,26 @@ import "errors"
 type RunResults int64
 
 const (
-	Accepted RunResults = iota
-	Wrong
+	Pending RunResults = iota
+	Accepted
 	CompileError
+	Wrong
 	MemoryLimit
 	TimeLimit
 	RuntimeError
 	JudgeError
-	Pending
 )
 
 var (
 	list_run_results = [...]string{
-		"Accepted",
-		"Wrong",
-		"CompileError",
-		"MemoryLimit",
-		"TimeLimit",
-		"RuntimeError",
-		"JudgeError",
-		"Pending",
+		"Pending", 
+		"Accepted", 
+		"CompileError", 
+		"Wrong", 
+		"MemoryLimit", 
+		"TimeLimit", 
+		"RuntimeError", 
+		"JudgeError", 
 	}
 )
 

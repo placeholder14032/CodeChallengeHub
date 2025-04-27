@@ -9,17 +9,21 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func SubmitCode(submission models.Submission) error {
+func SubmitCode(submission models.Submission) (int64, error) {
 	insertQuery := `
 		INSERT INTO submissions (user_id, problem_id, code_path, created_at)
 		VALUES (?, ?, ?, ?)
 	`
 
-	_, err := db.Exec(insertQuery, submission.UserId, submission.ProblemId, submission.CodePath, submission.CreatedAt)
+	output, err := db.Exec(insertQuery, submission.UserId, submission.ProblemId, submission.CodePath, submission.CreatedAt)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	lastid, err := output.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return lastid, nil
 }
 
 func UpdateSubmission(submission models.Submission) error {
