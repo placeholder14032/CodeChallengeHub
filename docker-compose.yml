@@ -1,18 +1,21 @@
-version: "3.8"
+# version: "1.3" 
 
 services:
-  webapp:
+  webapp: 
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile 
     ports:
-      - "8090:8090"
+      - "8090:8090" 
+      - "8081:8081" 
     environment:
       - DB_HOST=mysql
       - DB_USER=root
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD} 
       - DB_NAME=codeChallengeHub
-      - JUDGE_URL=http://judge:8081
+      # - JUDGE_URL=http://judge:8081 
+      - MAX_CONCURRENT_RUNS=5 
+      - TEMP_DIR=/app/temp 
     volumes:
       - submissions:/app/submissions
       - problems:/app/problems
@@ -23,38 +26,24 @@ services:
       - app-network
     restart: unless-stopped
 
-  judge:
-    build:
-      context: .
-      dockerfile: Dockerfile.judge
-    ports:
-      - "8081:8081"
-    environment:
-      - MAX_CONCURRENT_RUNS=5
-      - TEMP_DIR=/app/temp
-    volumes:
-      - submissions:/app/submissions:ro
-      - problems:/app/problems:ro
-    networks:
-      - app-network
-    restart: unless-stopped
 
   mysql:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD} 
       - MYSQL_DATABASE=codeChallengeHub
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "3306:3306"
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql 
+    #  - "3306:3306"
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}"]
+      interval: 10s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
 
 volumes:
   mysql-data:
