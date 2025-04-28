@@ -7,6 +7,7 @@ import (
     "context"
 
 	"log"
+    "fmt"
 )
 type contextKey string
 
@@ -15,6 +16,8 @@ const UserIDKey contextKey = "userID"
 func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         cookie, err := r.Cookie("session_id") 
+        fmt.Println("Cookie: ", cookie)
+        fmt.Println("ERRR ", err)
         if err != nil {
             log.Printf("No session cookie for request %s: %v", r.URL.String(), err)
             http.Redirect(w, r, "/login-user", http.StatusSeeOther)

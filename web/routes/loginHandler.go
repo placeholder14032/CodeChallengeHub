@@ -13,6 +13,7 @@ import (
 // @route POST /api/auth/login-user
 // @access public
 func LoginUser(w http.ResponseWriter, r *http.Request) {
+    fmt.Print("Login user hereee 1\n")
     if r.Method != http.MethodPost {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
@@ -39,6 +40,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
         Password: password,
     }
 
+    fmt.Printf("Usernameeeeeeeee: %s, Password: %s\n", username   , password)
+
     // Attempt login
     _, sessionID, err := database.SignInUser(user)
     if err != nil {
@@ -64,6 +67,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    fmt.Printf("Session IDDDDDDDDDD: %s\n", sessionID)
     // Set session cookie
     cookie := &http.Cookie{
         Name:     "session_id",
@@ -74,7 +78,9 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
         MaxAge:   3600 * 24, // 24 hours
         SameSite: http.SameSiteLaxMode,
     }
+    fmt.Printf("Cookieeeeeeee: %v\n", cookie)
     http.SetCookie(w, cookie)
+    fmt.Printf("Cookie seeeeeeeeet: %s\n", cookie.String())
 
     // Redirect to problems page on success
     http.Redirect(w, r, "/profile", http.StatusSeeOther)

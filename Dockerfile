@@ -11,10 +11,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o main ./cmd/main.go
 
 # RUN apk add --no-cache tzdata ca-certificates
 
+# RUN mkdir /app/main
+# COPY . /app/main
 
-COPY --from=builder /app/main .
 
-COPY --from=builder /app/ui ./ui
+# COPY --from=builder /app/main .
+
+# COPY --from=builder /app/ui ./ui
 # COPY --from=builder /app/pkg ./pkg
 
 RUN mkdir -p /app/submissions /app/problems /app/temp && \
