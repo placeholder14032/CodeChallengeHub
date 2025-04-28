@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/placeHolder143032/CodeChallengeHub/models"
 
@@ -68,35 +67,22 @@ func VerifyPassword(password, hash string) bool {
 }
 
 func GetUserInfo(id int) (models.User, error) {
-    var user models.User
-    query := `
-    SELECT id, username, password, is_admin, 
-           COALESCE(attempted_problems, 0) as attempted_problems, 
-           COALESCE(solved_problems, 0) as solved_problems 
-    FROM users 
-    WHERE id = ? 
-    LIMIT 1
-    `
-    err := db.QueryRow(query, id).Scan(
-        &user.ID,
-        &user.Username,
-        &user.Password,
-        &user.IsAdmin,
-        &user.AttemptedProblems,
-        &user.SolvedProblems,
-    )
+	var user models.User
+	query := `
+	SELECT username, password, is_admin, attempted_problems, solved_problems FROM users 
+	WHERE id = ? LIMIT 1
+	`
+	err := db.QueryRow(query, id).Scan(&user.Username, &user.Password, &user.IsAdmin, &user.AttemptedProblems, &user.SolvedProblems)
 
-    if err != nil {
-        if err == sql.ErrNoRows {
-            log.Printf("User not found: id=%d", id)
-            return models.User{}, errors.New("user does not exist")
-        }
-        log.Printf("Database error in GetUserInfo: id=%d, error=%v", id, err)
-        return models.User{}, fmt.Errorf("database error: %w", err)
-    }
+	if err != nil && err != sql.ErrNoRows {
+		return models.User{}, err
+	}
 
-    log.Printf("Successfully retrieved user: id=%d, username=%s", user.ID, user.Username)
-    return user, nil
+	if err == sql.ErrNoRows {
+		return models.User{}, errors.New("user does not exist")
+	}
+
+	return user, nil
 }
 
 func GetUserRole(id int) (int, error) {
@@ -238,21 +224,8 @@ func CreateAdminUser(username, password string) error {
 }
 
 
-func GetUserIDFromSession(sessionID string) (int, error) {
+func GetUserIDFromSession(sessionToken string) (int, error) {
     var userID int
-    query := `
-        SELECT user_id FROM sessions 
-        WHERE session_id = ? AND expires_at > NOW()
-        LIMIT 1
-    `
-    err := db.QueryRow(query, sessionID).Scan(&userID)
-    if err != nil {
-        if err == sql.ErrNoRows {
-            return 0, fmt.Errorf("session not found or expired")
-        }
-        return 0, fmt.Errorf("database error: %v", err)
-    }
-
-    log.Printf("Found user_id=%d for session=%s", userID, sessionID)
-    return userID, nil
+    err := db.QueryRow("SELECT user_id FROM sessions WHERE token = $1", sessionToken).Scan(&userID)
+    return userID, err
 }
