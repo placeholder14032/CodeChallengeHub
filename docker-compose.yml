@@ -32,6 +32,12 @@ services:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - app-network
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ptestpass123"] # Use the correct password
+      interval: 10s
+      timeout: 5s
+      retries: 10
     restart: unless-stopped
 
 volumes:
