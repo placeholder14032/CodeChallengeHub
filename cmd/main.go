@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-    host := "localhost"
+    host := "0.0.0.0"
     port := "8090"
 
     var err error
