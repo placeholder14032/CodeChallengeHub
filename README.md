@@ -3,9 +3,9 @@ CodeChallengeHub is a web platform where users can submit coding solutions to va
 
 
 ## Team members
-Nazanin Yousefi 
-Pooya Shams
-Mehdi Khoshnevis
+Nazanin Yousefi  
+Pooya Shams  
+Mehdi Khoshnevis  
 
 ## Run instruction
 run this command
