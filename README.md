@@ -12,3 +12,10 @@ run this command
 ```
 docker-compose up
 ```
+for load test
+```
+go test ./cmd
+```
+
+## Github repository
+[https://github.com/placeholder14032/CodeChallengeHub](https://github.com/placeholder14032/CodeChallengeHub)
