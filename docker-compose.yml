@@ -12,10 +12,7 @@ services:
       - DB_PASSWORD=testpass123
       - DB_NAME=codeChallengeHub
       - DB_PORT=3306
-      - JUDGE_URL=http://judge:8081
-    volumes:
-      - ./submissions:/app/submissions
-      - ./problems:/app/problems
+      - SESSION_SECRET=your-secret-key
     depends_on:
       mysql:
         condition: service_healthy
@@ -33,8 +30,6 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    ports:
-      - "3306:3306"
     healthcheck:
       test:
         [
@@ -47,7 +42,7 @@ services:
           "root",
           "-ptestpass123",
         ]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
     networks:
