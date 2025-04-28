@@ -1,0 +1,23 @@
+W/O docker now:
+
+export DB_HOST=localhost
+export DB_USER=amabilis
+export DB_PASSWORD=amabilisfi20050921
+export DB_NAME=codeChallemgehub
+export DB_PORT=3306
+
+then:
+go run cmd/main.go
+
+for mysql:
+brew services start mysql
+mysql -u root -p
+
+
+SHOW DATABASES;
+USE codeChallemgehub;
+SHOW TABLES;
+SELECT * FROM users;
+
+
+With docker:
