@@ -57,8 +57,8 @@ func Connect() (*sql.DB, error) {
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         is_admin BOOLEAN DEFAULT 0,
-        attemptedProblems INT DEFAULT 0,
-        solvedProblems INT DEFAULT 0
+        attempted_problems INT DEFAULT 0,
+        solved_problems INT DEFAULT 0
     );
     `
 
