@@ -21,3 +21,6 @@ SELECT * FROM users;
 
 
 With docker:
+docker-compose up
+docker-compose down 
+stuff
