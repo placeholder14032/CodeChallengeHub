@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+    "os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -18,13 +19,33 @@ func Connect() (*sql.DB, error) {
 	// dbname := "codeChallengeHub" // your MySQL database name
 
 
-    username := "amabilis"           // your MySQL username
-	password := "amabilisfi20050921" // your MySQL password
-	hostname := "127.0.0.1:3306"
-	dbname := "codeChallemgeHub" // your MySQL database name
+    // username := "amabilis"           // your MySQL username
+	// password := "amabilisfi20050921" // your MySQL password
+	// hostname := "127.0.0.1:3306"
+	// dbname := "codeChallemgeHub" // your MySQL database name
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", username, password, hostname, dbname)
 
+    dbHost := os.Getenv("DB_HOST")
+    dbUser := os.Getenv("DB_USER")
+    dbPassword := os.Getenv("DB_PASSWORD")
+    dbName := os.Getenv("DB_NAME")
+    dbPort := os.Getenv("DB_PORT") 
+
+
+    if dbHost == "" {
+        dbHost = "mysql" // Default to service name if env var not set (good practice)
+    }
+    if dbPort == "" {
+        dbPort = "3306" // Default MySQL port
+    }
+
+    dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+    dbUser,
+    dbPassword,
+    dbHost, 
+    dbPort,
+    dbName,
+)
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err

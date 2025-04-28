@@ -34,7 +34,7 @@ services:
       - MYSQL_DATABASE=codeChallengeHub
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql 
+      # - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql 
     #  - "3306:3306"
     networks:
       - app-network
