@@ -1,0 +1,10 @@
+.git
+.gitignore
+README.md
+docker-compose.yml
+Dockerfile
+Dockerfile.judge
+.env
+*.md
+/submissions/*
+/problems/*
