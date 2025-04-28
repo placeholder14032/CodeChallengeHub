@@ -1,8 +1,8 @@
-version: '3.8'
+version: "3.8"
 
 services:
   webapp:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     ports:
@@ -10,7 +10,7 @@ services:
     environment:
       - DB_HOST=mysql
       - DB_USER=root
-      - DB_PASSWORD=yourpassword
+      - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=codeChallengeHub
       - JUDGE_URL=http://judge:8081
     volumes:
@@ -42,7 +42,7 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=yourpassword
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=codeChallengeHub
     volumes:
       - mysql-data:/var/lib/mysql
